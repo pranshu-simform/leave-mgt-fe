@@ -19,7 +19,7 @@ src/
   styles/                 # tokens.css, theme.css, base.css, glass.css
   routes/index.tsx        # routes built from PATH_ROUTES, lazy-loaded
   constants/              # apiRoutes.ts, queryKeys.ts, pathRoutes.ts, constant.ts
-  context/                # ThemeContext (done), AuthContext (Phase 8)
+  context/                # ThemeContext, AuthContext (+ authContext.ts, with hooks/useAuth.ts)
   lib/                    # apiClient.ts, queryClient.ts, dates.ts, utils.ts (cn)
   hooks/                  # shared hooks + index.ts barrel
   components/ui/          # shadcn primitives (kebab-case files) + index.ts
@@ -40,18 +40,18 @@ Features: auth, dashboard, leave-requests, approvals, calendar, admin (plus the 
 - **Hooks:** one hook per file, `use<Action>.ts`. Mutations invalidate `QUERY_KEYS.<X>.ALL` and `DETAIL(id)`. Errors go through `handleApiError(error, fallback)`, toasts through `showSuccess` / `showError`.
 - **Forms:** react-hook-form + `zodResolver`, `mode: "onChange"`, `<form noValidate>`, a `FormGroup` per field, `defaultValues` for every field, submit disabled while `isSubmitting || isPending`. Server `details` (`{ field, message }`) map to fields with `setError`. Schemas live in `features/<f>/schemas/<f>Schema.ts`.
 - **Tables:** server-side `DataTable` with `useTableFilters`. Pagination is page-based with totals: send `page` (1-based) and `limit` (`PAGE_SIZE_OPTIONS`, default `DEFAULT_PAGE_SIZE`); read `pagination.total` and `totalPages`.
-- **Routing:** path and the lazy component are co-located in `PATH_ROUTES` (`ALLOWED_ROLES` and `RoleRoute` arrive in Phase 8). Roles will be `EMPLOYEE`, `MANAGER`, `HR_ADMIN`.
+- **Routing:** a private screen is one entry in `PATH_ROUTES` (`PATH`, lazy `COMPONENT`, `ALLOWED_ROLES`, optional `NAV { LABEL, ICON }`). The route, the `RoleRoute` guard and the sidebar entry (`lib/navigation.ts`) all derive from it, so never hand-register a route or a nav item. Everything private renders inside `routes/PrivateLayout.tsx`. Roles are `EMPLOYEE`, `MANAGER`, `HR_ADMIN` (`USER_ROLES`). The guard is a convenience; the API is the authority.
 - **Pages** are default exports (lazy loading needs it). Everything else is a named export. Props are `Readonly<Props>`.
 - **No optimistic updates** on leave state changes. Invalidate queries after the mutation settles.
 
 ## API client and auth
 
 - `lib/apiClient.ts` is a `class ApiClient` singleton (coco-fe style) over axios, with `withCredentials: true`. Its verbs (`get`, `post`, `put`, `patch`, `delete`) resolve to the response body, and every failure is thrown as an `ApiError { status, code, message, details }` (`createApiError` reads the API's `{ error: { code, message } }`; no response at all is status 0, code `NETWORK_ERROR`). **No token handling.** Both tokens will be httpOnly cookies. The API rejects foreign origins itself (CORS), so the client sends no extra header.
-- On 401 it queues concurrent requests and runs one `POST /auth/refresh`, then retries. A failed refresh dispatches `FORCE_LOGOUT`.
+- On any 401 (except from login and refresh themselves) it runs one `POST /auth/refresh` and retries the request once. `lib/sessionRefresh.ts` makes the refresh single-flight in a tab and serializes it across tabs with a Web Lock, because the refresh token rotates and replaying one revokes the session. A failed refresh, or a 401 right after a refresh, dispatches `FORCE_LOGOUT`; `AuthContext` then clears the cache (`clearUserData()` in `lib/queryClient.ts`) and shows "Your session expired". Do not add token handling: the cookies are httpOnly.
 - The browser calls the API directly at `VITE_API_BASE_URL` (`http://localhost:4000` in dev, with no `/api`; `API_CONFIG.BASE_URL` in `constants/constant.ts` appends `/api`). That is cross-origin, so the API's CORS middleware must allow this app's URL (`FRONTEND_ORIGIN`), and Vite is pinned to port 5173 (`strictPort`). Business routes are written `${API_V1}/…` in `constants/apiRoutes.ts` (`API_V1 = '/v1'`); health routes are unversioned.
 - `lib/queryClient.ts` uses `REACT_QUERY_CONFIG` from `constants/constant.ts`: 2-minute stale time, up to 3 retries with exponential backoff, and never a retry on a 4xx.
 - Errors are normalized to `ApiError { message, status, code, details }`.
-- `AuthContext` reads `useQuery(QUERY_KEYS.AUTH.ME)` with `staleTime: Infinity`. Read the user from context; do not refetch it.
+- `AuthContext` reads `useQuery(QUERY_KEYS.AUTH.ME)` with `staleTime: Infinity`; a 401 there means "signed out" (the data is `null`), not an error. Read the user with `useAuth()`; do not refetch it. Sign-in and sign-out both go through `clearUserData()` so one user's data never reaches the next. Sign-out only completes when the server call succeeds, because only the server can clear httpOnly cookies.
 
 ## Dates
 

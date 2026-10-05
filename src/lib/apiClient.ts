@@ -1,4 +1,6 @@
-import { API_CONFIG } from '@/constants/constant'
+import { API_ROUTES } from '@/constants/apiRoutes'
+import { API_CONFIG, AUTH_EVENTS } from '@/constants/constant'
+import { refreshSession } from '@/lib/sessionRefresh'
 import type {
   AxiosInstance,
   AxiosRequestConfig,
@@ -6,6 +8,13 @@ import type {
   InternalAxiosRequestConfig,
 } from 'axios'
 import axios from 'axios'
+
+declare module 'axios' {
+  interface AxiosRequestConfig {
+    // Set once a request has been retried after a refresh, so it can never loop.
+    _retried?: boolean
+  }
+}
 
 export interface ApiErrorDetail {
   field: string
@@ -90,6 +99,12 @@ export function createApiError(status: number, data: unknown): ApiError {
   return error
 }
 
+// A 401 from sign-in means wrong credentials, and a 401 from refresh means the session is over.
+// Neither is fixed by refreshing.
+function canRefresh(url: string | undefined): boolean {
+  return url !== API_ROUTES.AUTH.LOGIN && url !== API_ROUTES.AUTH.REFRESH
+}
+
 class ApiClient {
   private readonly axiosInstance: AxiosInstance
 
@@ -119,9 +134,34 @@ class ApiClient {
 
     this.axiosInstance.interceptors.response.use(
       (response: AxiosResponse) => response,
-      (error: unknown) => {
+      async (error: unknown) => {
         if (!axios.isAxiosError(error)) {
           throw error
+        }
+
+        const { config } = error
+        if (
+          error.response?.status === 401 &&
+          config &&
+          !config._retried &&
+          canRefresh(config.url)
+        ) {
+          config._retried = true
+          try {
+            await refreshSession(() => this.refresh())
+          } catch (refreshError) {
+            window.dispatchEvent(new Event(AUTH_EVENTS.FORCE_LOGOUT))
+            throw refreshError
+          }
+          try {
+            return await this.axiosInstance(config)
+          } catch (retryError) {
+            // Still unauthorized right after a refresh: the session is not recoverable.
+            if (isApiError(retryError) && retryError.status === 401) {
+              window.dispatchEvent(new Event(AUTH_EVENTS.FORCE_LOGOUT))
+            }
+            throw retryError
+          }
         }
 
         if (error.response) {
@@ -136,6 +176,11 @@ class ApiClient {
         })
       },
     )
+  }
+
+  // Rotates both cookies. Goes through the interceptors, so a 401 here becomes an ApiError.
+  private async refresh(): Promise<void> {
+    await this.axiosInstance.post(API_ROUTES.AUTH.REFRESH)
   }
 
   async get<T>(endpoint: string, config?: AxiosRequestConfig): Promise<T> {

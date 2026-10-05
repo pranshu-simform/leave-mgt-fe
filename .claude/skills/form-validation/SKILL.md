@@ -41,16 +41,14 @@ const { mutate, isPending } = useSubmitLeaveRequest({
 })
 
 ;<form noValidate onSubmit={form.handleSubmit((v) => mutate(v))}>
-  <FormGroup
-    label="Leave type"
-    htmlFor="leaveTypeId"
-    error={form.formState.errors.leaveTypeId?.message}
-  >
-    <Controller
-      name="leaveTypeId"
-      control={form.control}
-      render={({ field }) => <AppSelect id="leaveTypeId" {...field} options={types} />}
-    />
+  <FormGroup label="Leave type" error={form.formState.errors.leaveTypeId?.message}>
+    {(controlProps) => (
+      <Controller
+        name="leaveTypeId"
+        control={form.control}
+        render={({ field }) => <Select {...controlProps} {...field} />}
+      />
+    )}
   </FormGroup>
   <Button
     type="submit"
@@ -65,7 +63,7 @@ const { mutate, isPending } = useSubmitLeaveRequest({
 
 - `useForm<T>` is typed, uses `zodResolver`, `mode: "onChange"` and has `defaultValues` for every field.
 - `<form noValidate>`. `register` for plain inputs, `Controller` for `AppSelect`, `DateRangePicker` and other custom inputs.
-- One `FormGroup` per field, with `id` matching `htmlFor`.
+- One `FormGroup` per field. Its child is a function that receives `{ id, 'aria-invalid', 'aria-describedby' }`: spread them onto the control so the label, the error and the screen reader stay wired. For a plain input also spread `form.register('name')`. A working example is `features/auth/pages/LoginPage.tsx`.
 - Submit is disabled while `isSubmitting || isPending`. A disabled submit button explains why (`WithTooltip`).
 - **Server errors:** a 400 `VALIDATION_ERROR` carries `details[{ field, message }]` (on the `ApiError`), mapped onto fields with `setError`. Other codes (`INSUFFICIENT_BALANCE`, `OVERLAPPING_REQUEST`, `NOTICE_TOO_SHORT`) show as a form-level alert or toast via `handleApiError`.
 - A reject form requires a non-empty reason, and the schema says so, as the server also enforces it.

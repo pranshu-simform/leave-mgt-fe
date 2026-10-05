@@ -18,3 +18,28 @@ export const REACT_QUERY_CONFIG = {
   RETRY_DELAY: 1000,
   MAX_RETRY_DELAY: 30000,
 } as const
+
+export const USER_ROLES = {
+  EMPLOYEE: 'EMPLOYEE',
+  MANAGER: 'MANAGER',
+  HR_ADMIN: 'HR_ADMIN',
+} as const
+export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES]
+
+export const ROLE_LABELS: Record<UserRole, string> = {
+  EMPLOYEE: 'Employee',
+  MANAGER: 'Manager',
+  HR_ADMIN: 'HR admin',
+}
+
+export const AUTH_EVENTS = {
+  // Dispatched on window when the session cannot be refreshed any more.
+  FORCE_LOGOUT: 'auth:force-logout',
+} as const
+
+export const SESSION_REFRESH = {
+  LOCK_NAME: 'session-refresh',
+  LAST_REFRESH_KEY: 'session:last-refresh',
+  // A refresh by another tab this recently already rotated the shared cookies.
+  RECENT_WINDOW_MS: 10_000,
+} as const
