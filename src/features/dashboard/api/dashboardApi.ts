@@ -1,6 +1,9 @@
 import { API_ROUTES } from '@/constants/apiRoutes'
-import { apiClient } from '@/lib/apiClient'
+import { apiClient, type ApiResponse } from '@/lib/apiClient'
 
 export const dashboardApi = {
-  getHealth: () => apiClient.get<{ status: string }>(API_ROUTES.HEALTH.READY),
+  getHealth: async () => {
+    const response = await apiClient.get<ApiResponse<{ status: string }>>(API_ROUTES.HEALTH.READY)
+    return response.data
+  },
 }

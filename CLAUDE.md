@@ -31,11 +31,11 @@ Features: auth, dashboard, leave-requests, approvals, calendar, admin. Use the `
 ## Feature rules
 
 - Everything for a feature lives in `features/<name>/`. Shared code goes to `components/shared`, `hooks`, or `lib` only when a second feature needs it.
-- **API:** `features/<f>/api/<f>Api.ts` is a plain object of async functions. Routes come from `constants/apiRoutes.ts`, with `:id` placeholders replaced via `.replace(":id", id)`. Every response is typed `ApiResponse<T> = { data: T; meta?: … }`.
+- **API:** `features/<f>/api/<f>Api.ts` is a plain object of async functions. Routes come from `constants/apiRoutes.ts`, with `:id` placeholders replaced via `.replace(":id", id)`. Responses are typed with `ApiResponse<T>` and `PaginatedApiResponse<T>` (see `docs/API-RESPONSES.md`), and the module **returns the envelope's data**: `response.data` for one item, `{ items, pagination }` (`PaginatedResult<T>`) for a list. Hooks and pages never see `success`.
 - **Query keys:** only from `constants/queryKeys.ts`. Never inline strings. Detail queries use `enabled: !!id`.
 - **Hooks:** one hook per file, `use<Action>.ts`. Mutations invalidate `QUERY_KEYS.<X>.ALL` and `DETAIL(id)`. Errors go through `handleApiError(error, fallback)`, toasts through `showSuccess` / `showError`.
-- **Forms:** react-hook-form + `zodResolver`, `mode: "onChange"`, `<form noValidate>`, a `FormGroup` per field, `defaultValues` for every field, submit disabled while `isSubmitting || isPending`. Server `issues` map to fields with `setError`. Schemas live in `features/<f>/schemas/<f>Schema.ts`.
-- **Tables:** server-side `DataTable` with `useTableFilters`. Pagination is cursor-based ("load more" or next/prev cursors).
+- **Forms:** react-hook-form + `zodResolver`, `mode: "onChange"`, `<form noValidate>`, a `FormGroup` per field, `defaultValues` for every field, submit disabled while `isSubmitting || isPending`. Server `details` (`{ field, message }`) map to fields with `setError`. Schemas live in `features/<f>/schemas/<f>Schema.ts`.
+- **Tables:** server-side `DataTable` with `useTableFilters`. Pagination is page-based with totals: send `page` (1-based) and `limit` (`PAGE_SIZE_OPTIONS`, default `DEFAULT_PAGE_SIZE`); read `pagination.total` and `totalPages`.
 - **Routing:** path and the lazy component are co-located in `PATH_ROUTES` (`ALLOWED_ROLES` and `RoleRoute` arrive in Phase 8). Roles will be `EMPLOYEE`, `MANAGER`, `HR_ADMIN`.
 - **Pages** are default exports (lazy loading needs it). Everything else is a named export. Props are `Readonly<Props>`.
 - **No optimistic updates** on leave state changes. Invalidate queries after the mutation settles.
@@ -64,7 +64,7 @@ Date-only values are `YYYY-MM-DD` strings. Use the helpers in `lib/dates.ts`. Ne
 ## Verification (no automated tests)
 
 - By decision there is no test library and no test files. Do not add them.
-- Check in the browser: one refresh call when several requests hit an expired cookie, the reject dialog blocking an empty reason, role guards redirecting, and server `issues` landing on the right form fields.
+- Check in the browser: one refresh call when several requests hit an expired cookie, the reject dialog blocking an empty reason, role guards redirecting, and server `details` landing on the right form fields.
 
 ## Naming and style
 

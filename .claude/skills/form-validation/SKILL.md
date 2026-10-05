@@ -36,8 +36,8 @@ const form = useForm<SubmitLeaveRequestFormData>({
   defaultValues: { leaveTypeId: '', startDate: '', endDate: '', note: '' },
 })
 const { mutate, isPending } = useSubmitLeaveRequest({
-  onFieldErrors: (issues) =>
-    issues.forEach((i) => form.setError(i.path.join('.') as never, { message: i.message })),
+  onFieldErrors: (details) =>
+    details.forEach((d) => form.setError(d.field as never, { message: d.message })),
 })
 
 ;<form noValidate onSubmit={form.handleSubmit((v) => mutate(v))}>
@@ -67,7 +67,7 @@ const { mutate, isPending } = useSubmitLeaveRequest({
 - `<form noValidate>`. `register` for plain inputs, `Controller` for `AppSelect`, `DateRangePicker` and other custom inputs.
 - One `FormGroup` per field, with `id` matching `htmlFor`.
 - Submit is disabled while `isSubmitting || isPending`. A disabled submit button explains why (`WithTooltip`).
-- **Server errors:** a 400 `VALIDATION_ERROR` carries `issues[{ path, message }]`, mapped onto fields with `setError`. Other codes (`INSUFFICIENT_BALANCE`, `OVERLAPPING_REQUEST`, `NOTICE_TOO_SHORT`) show as a form-level alert or toast via `handleApiError`.
+- **Server errors:** a 400 `VALIDATION_ERROR` carries `details[{ field, message }]` (on the `ApiError`), mapped onto fields with `setError`. Other codes (`INSUFFICIENT_BALANCE`, `OVERLAPPING_REQUEST`, `NOTICE_TOO_SHORT`) show as a form-level alert or toast via `handleApiError`.
 - A reject form requires a non-empty reason, and the schema says so, as the server also enforces it.
 - Guard dirty forms with a discard confirmation before navigating away or closing a dialog.
 
@@ -75,5 +75,5 @@ const { mutate, isPending } = useSubmitLeaveRequest({
 
 - [ ] Schema in the feature's `schemas/` folder, with the inferred type exported.
 - [ ] Every field has a label, an error message and a default value.
-- [ ] Server `issues` are mapped to fields.
+- [ ] Server `details` are mapped to fields.
 - [ ] Checked in the browser: invalid input blocks submit, and a server issue lands on the right field.

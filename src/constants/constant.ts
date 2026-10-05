@@ -3,6 +3,9 @@ export const API_CONFIG = {
   API_CUSTOM_TIMEOUT: 60000,
 } as const
 
+export const PAGE_SIZE_OPTIONS = [25, 50, 75, 100] as const
+export const DEFAULT_PAGE_SIZE = PAGE_SIZE_OPTIONS[0]
+
 export const REACT_QUERY_CONFIG = {
   STALE_TIME_OPTIONS: {
     VERY_SHORT: 1000 * 30,

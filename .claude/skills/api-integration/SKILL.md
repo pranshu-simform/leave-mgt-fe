@@ -31,7 +31,7 @@ LEAVE_REQUESTS: {
 
 ## 3. Types: `features/<f>/types/<f>Types.ts`
 
-Mirror the backend response. Dates are `string` (`YYYY-MM-DD`). Paginated lists carry `meta: { nextCursor: string | null }`.
+Mirror the backend response. Dates are `string` (`YYYY-MM-DD`). Paginated lists use `PaginatedApiResponse<T>` (`data` array plus `pagination { page, limit, total, totalPages, hasNextPage, hasPreviousPage }`).
 
 ## 4. API module: `features/<f>/api/<f>Api.ts`
 
@@ -42,7 +42,7 @@ export const approvalApi = {
 }
 ```
 
-`apiClient` already returns `response.data`. Cookies and `X-Requested-With` are handled by it.
+`apiClient.get<T>()` resolves to the response body (the envelope). The module then returns the envelope's `data`, or `{ items: response.data, pagination: response.pagination }` as `PaginatedResult<T>` for a list, so hooks never see `success`. Cookies and `X-Requested-With` are handled by it.
 
 ## 5. Hooks: one per file
 

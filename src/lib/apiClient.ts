@@ -7,15 +7,43 @@ import type {
 } from 'axios'
 import axios from 'axios'
 
+export interface ApiErrorDetail {
+  field: string
+  message: string
+}
+
 export interface ApiError extends Error {
   message: string
   status: number
   code: string
-  details?: unknown
+  details?: ApiErrorDetail[]
+}
+
+export interface Pagination {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
 }
 
 export interface ApiResponse<T = unknown> {
+  success: true
+  message?: string
   data: T
+}
+
+export interface PaginatedApiResponse<T = unknown> {
+  success: true
+  message?: string
+  data: T[]
+  pagination: Pagination
+}
+
+export interface PaginatedResult<T> {
+  items: T[]
+  pagination: Pagination
 }
 
 export function handleApiError(error: unknown, fallbackMessage: string): string {
@@ -38,6 +66,15 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
 }
 
+function toDetails(value: unknown): ApiErrorDetail[] | undefined {
+  if (!Array.isArray(value)) return undefined
+  const details = value.filter(
+    (item): item is ApiErrorDetail =>
+      isRecord(item) && typeof item.field === 'string' && typeof item.message === 'string',
+  )
+  return details.length > 0 ? details : undefined
+}
+
 export function createApiError(status: number, data: unknown): ApiError {
   const body = isRecord(data) && isRecord(data.error) ? data.error : {}
   const apiMessage = body.message
@@ -49,7 +86,7 @@ export function createApiError(status: number, data: unknown): ApiError {
   const error = new Error(message) as ApiError
   error.status = status
   error.code = typeof body.code === 'string' ? body.code : 'UNKNOWN_ERROR'
-  error.details = data
+  error.details = toDetails(body.details)
   return error
 }
 
