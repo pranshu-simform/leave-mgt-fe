@@ -8,16 +8,18 @@ Path alias: `@/` → `src/`. Relative `../../` imports into `src/` are forbidden
 
 - `pnpm dev`, `pnpm build` (`tsc -b && vite build`), `pnpm preview`
 - `pnpm lint` (oxlint), `pnpm format` / `pnpm format:check` (oxfmt)
-- Planned: `pnpm typecheck`
+- `pnpm build` runs `tsc -b` and is the type check (there is no separate `typecheck` script)
+- `pnpm dev -- --port 5174` when the old Docker `frontend` container holds 5173
 
 ## Target structure
 
 ```
 src/
-  main.tsx  App.tsx  index.css
+  main.tsx  App.tsx  index.css (imports only)
+  styles/                 # tokens.css, theme.css, base.css, glass.css
   routes/index.tsx        # routes built from PATH_ROUTES, lazy-loaded
   constants/              # apiRoutes.ts, queryKeys.ts, pathRoutes.ts, constant.ts
-  context/AuthContext.tsx
+  context/                # ThemeContext (done), AuthContext (Phase 8)
   lib/                    # apiClient.ts, queryClient.ts, dates.ts, utils.ts (cn)
   hooks/                  # shared hooks + index.ts barrel
   components/ui/          # shadcn primitives (kebab-case files) + index.ts
@@ -26,7 +28,9 @@ src/
   types/
 ```
 
-Features: auth, dashboard, leave-requests, approvals, calendar, admin. Use the `add-feature` skill to create one.
+Features: auth, dashboard, leave-requests, approvals, calendar, admin (plus the dev-only `design-system`). Use the `add-feature` skill to create one.
+
+**Design system first.** The look (teal brand, "aurora glass", light and dark) is defined in [docs/DESIGN-SYSTEM.md](../docs/DESIGN-SYSTEM.md) and shown live at `/design-system` in dev. Read it before building any screen. Tokens are in `src/styles/`; shared patterns are in `components/shared`.
 
 ## Feature rules
 
@@ -55,7 +59,11 @@ Date-only values are `YYYY-MM-DD` strings. Use the helpers in `lib/dates.ts`. Ne
 
 ## UI rules
 
-- Use shadcn components and the `cn()` helper from `lib/utils`. Use theme tokens, not hex values or arbitrary values. Use `gap-*` rather than `space-*`, and `size-*`.
+- Use shadcn components and the `cn()` helper from `lib/utils`. Use **semantic tokens** (`bg-card`, `text-muted-foreground`, `bg-success-subtle`), never hex, `oklch()`, raw palette steps (`teal-500`) or arbitrary values. Use `gap-*` rather than `space-*`, and `size-*`.
+- **Type by role:** `text-display`, `text-h1` to `text-h3`, `text-body`, `text-body-sm`, `text-label`, `text-caption`. Not `text-2xl`.
+- **Glass:** cards and overlays are glass automatically (`data-slot` mapping in `styles/glass.css`). Use `glass`, `glass-raised` or `glass-overlay` only for a custom surface. No blur on table rows or list items, at most two overlapping blurred layers, and never write `-webkit-backdrop-filter` (the build adds it).
+- **Status** is a `StatusBadge` (icon + label + tone from `constants/leaveStatus.ts`). Brand gradients are never used for status. One gradient primary button per view.
+- Use the shared patterns instead of rebuilding them: `AppShell`, `PageHeader`, `EmptyState`, `ErrorState`, `TableSkeleton`, `CardSkeleton`, `PageLoader`, `FormGroup`, `WithTooltip`, `ConfirmDialog`.
 - **Disabled actions carry a tooltip** explaining why (`WithTooltip`). Never leave a disabled button unexplained.
 - Do not convey status by colour alone. Pair it with text or an icon.
 - Dialogs trap focus and restore it. Date pickers work from the keyboard.
