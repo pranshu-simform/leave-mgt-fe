@@ -27,37 +27,39 @@ export type SubmitLeaveRequestFormData = z.infer<typeof submitLeaveRequestSchema
 
 ISO date strings compare correctly as strings. Never build `Date` objects from them. The server is the authority, and the client schema is for UX.
 
-## Form component
+## Form component (the real one: `features/leave-requests/components/RequestForm.tsx`)
 
 ```tsx
-const form = useForm<SubmitLeaveRequestFormData>({
-  resolver: zodResolver(submitLeaveRequestSchema),
+const form = useForm<LeaveRequestFormData>({
+  resolver: zodResolver(leaveRequestSchema),
   mode: 'onChange',
-  defaultValues: { leaveTypeId: '', startDate: '', endDate: '', note: '' },
+  defaultValues, // every field; a prefill from the URL goes through parsePrefill()
 })
-const { mutate, isPending } = useSubmitLeaveRequest({
-  onFieldErrors: (details) =>
-    details.forEach((d) => form.setError(d.field as never, { message: d.message })),
-})
+const [leaveTypeId, startDate, endDate, note] = useWatch({ control: form.control, name: [...] })
 
-;<form noValidate onSubmit={form.handleSubmit((v) => mutate(v))}>
-  <FormGroup label="Leave type" error={form.formState.errors.leaveTypeId?.message}>
-    {(controlProps) => (
-      <Controller
-        name="leaveTypeId"
-        control={form.control}
-        render={({ field }) => <Select {...controlProps} {...field} />}
-      />
-    )}
-  </FormGroup>
-  <Button
-    type="submit"
-    disabled={!form.formState.isValid || form.formState.isSubmitting || isPending}
-  >
-    Submit
-  </Button>
-</form>
+// A custom control that owns two fields (a date range) writes both with setValue.
+<FormGroup label="Dates" required error={errors.startDate?.message ?? errors.endDate?.message ?? problemFor('startDate', 'endDate')}>
+  {(controlProps) => (
+    <DateRangePicker
+      {...controlProps}
+      value={{ start: startDate, end: endDate }}
+      onChange={({ start, end }) => {
+        form.setValue('startDate', start, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
+        form.setValue('endDate', end, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
+      }}
+    />
+  )}
+</FormGroup>
+
+// Call handleSubmit inside the event handler, not during render (the refs lint rule).
+<form noValidate onSubmit={(event) => void form.handleSubmit(save)(event)}>
 ```
+
+- **Problems the server reports before submit** (the preview endpoint's `violations`, each with a `field`) are shown under that field, next to the form's own errors, so they are announced and linked with `aria-describedby`. The form's error wins over a preview problem for the same field.
+- **Server errors at submit** go through `applyServerError`: `details[{ field, message }]` map onto fields with `setError` (a field the form does not have becomes a toast), a constraint error without details (the overlap rule) goes under the field it concerns, anything else is a toast. A page can handle codes itself first (`onSubmitError`, for example edit's `VERSION_CONFLICT`).
+- **Submit** is disabled with a tooltip (`WithTooltip`) saying why: invalid, a problem from the server, still checking, nothing changed (edit). The handler takes a synchronous lock (a ref) so two clicks in one tick send one request.
+- **Unsaved changes:** `useBlocker` (the app uses a data router) with a `ConfirmDialog` when the form is dirty. After a save, store the result in state and navigate from an effect, so the blocker sees the saved state and lets it through.
+- **Editing something versioned:** keep a snapshot of the record when the form opens and send its `version`, not the live query's, or a change made elsewhere is overwritten silently. Remount the form (a `key`) to reload.
 
 ## Rules
 
@@ -67,7 +69,7 @@ const { mutate, isPending } = useSubmitLeaveRequest({
 - Submit is disabled while `isSubmitting || isPending`. A disabled submit button explains why (`WithTooltip`).
 - **Server errors:** a 400 `VALIDATION_ERROR` carries `details[{ field, message }]` (on the `ApiError`), mapped onto fields with `setError`. Other codes (`INSUFFICIENT_BALANCE`, `OVERLAPPING_REQUEST`, `NOTICE_TOO_SHORT`) show as a form-level alert or toast via `handleApiError`.
 - A reject form requires a non-empty reason, and the schema says so, as the server also enforces it.
-- Guard dirty forms with a discard confirmation before navigating away or closing a dialog.
+- Guard dirty forms with a discard confirmation before navigating away or closing a dialog (see above).
 
 ## Checklist
 

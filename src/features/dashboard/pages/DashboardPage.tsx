@@ -2,7 +2,7 @@ import { WalletCardsIcon } from 'lucide-react'
 import { Link } from 'react-router'
 import { CardSkeleton, EmptyState, ErrorState, PageHeader } from '@/components/shared'
 import { Button } from '@/components/ui'
-import { NEW_REQUEST_PATH } from '@/constants/pathRoutes'
+import { PATH_ROUTES } from '@/constants/pathRoutes'
 import { useMyBalances } from '@/features/balances/hooks/useMyBalances'
 import { BalanceCard } from '@/features/dashboard/components/BalanceCard'
 import { UpcomingLeave } from '@/features/dashboard/components/UpcomingLeave'
@@ -19,7 +19,7 @@ export default function DashboardPage() {
         title={user ? `Welcome, ${user.name.split(' ')[0]}` : 'Dashboard'}
         description={year ? `Your leave balances for ${year}` : 'Your leave balances'}
         actions={
-          <Button render={<Link to={NEW_REQUEST_PATH} />} nativeButton={false}>
+          <Button render={<Link to={PATH_ROUTES.NEW_REQUEST.PATH} />} nativeButton={false}>
             Request leave
           </Button>
         }

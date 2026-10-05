@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import { AppSelect, DataTable, EmptyState, FormGroup, PageHeader } from '@/components/shared'
 import { Button } from '@/components/ui'
 import { LEAVE_STATUS_CONFIG, LEAVE_STATUSES } from '@/constants/leaveStatus'
-import { NEW_REQUEST_PATH } from '@/constants/pathRoutes'
+import { PATH_ROUTES } from '@/constants/pathRoutes'
 import { requestColumns } from '@/features/leave-requests/components/requestColumns'
 import { useMyRequests } from '@/features/leave-requests/hooks/useMyRequests'
 import { useLeaveTypes } from '@/features/leave-types/hooks/useLeaveTypes'
@@ -72,7 +72,7 @@ export default function MyRequestsPage() {
   }, [filters.year])
 
   const requestLeave = (
-    <Button render={<Link to={NEW_REQUEST_PATH} />} nativeButton={false}>
+    <Button render={<Link to={PATH_ROUTES.NEW_REQUEST.PATH} />} nativeButton={false}>
       Request leave
     </Button>
   )

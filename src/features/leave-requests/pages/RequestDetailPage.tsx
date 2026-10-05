@@ -1,13 +1,14 @@
 import { FileQuestionIcon } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useNavigate, useParams } from 'react-router'
 import { ConfirmDialog, EmptyState, ErrorState, PageHeader } from '@/components/shared'
 import { Button, Card, CardContent, CardHeader, CardTitle, Skeleton } from '@/components/ui'
-import { PATH_ROUTES } from '@/constants/pathRoutes'
+import { PATH_ROUTES, requestEditPath } from '@/constants/pathRoutes'
 import { AuditTimeline } from '@/features/leave-requests/components/AuditTimeline'
 import { RequestSummary } from '@/features/leave-requests/components/RequestSummary'
 import { useCancelRequest } from '@/features/leave-requests/hooks/useCancelRequest'
 import { useLeaveRequest } from '@/features/leave-requests/hooks/useLeaveRequest'
+import { prefillSearch } from '@/features/leave-requests/schemas/leaveRequestSchema'
 import type { LeaveRequest } from '@/features/leave-requests/types/leaveRequestTypes'
 import { useAuth } from '@/hooks/useAuth'
 import { isApiError } from '@/lib/apiClient'
@@ -15,7 +16,13 @@ import { formatDateRange, todayLocalIso } from '@/lib/dates'
 
 const BREADCRUMBS = [{ label: 'My requests', to: PATH_ROUTES.REQUESTS.PATH }]
 
-function CancelAction({ request }: Readonly<{ request: LeaveRequest }>) {
+// With `resubmit`, a successful cancel opens a new request form with the same details, which is how
+// an approved request is changed: it cannot be edited, so it is cancelled and sent again.
+function CancelAction({
+  request,
+  resubmit = false,
+}: Readonly<{ request: LeaveRequest; resubmit?: boolean }>) {
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const cancel = useCancelRequest(request.id)
   // A fast second click can arrive before the pending state has re-rendered the button as disabled,
@@ -26,6 +33,18 @@ function CancelAction({ request }: Readonly<{ request: LeaveRequest }>) {
     if (submitting.current) return
     submitting.current = true
     cancel.mutate(undefined, {
+      onSuccess: () => {
+        if (!resubmit) return
+        void navigate({
+          pathname: PATH_ROUTES.NEW_REQUEST.PATH,
+          search: prefillSearch({
+            leaveTypeId: request.leaveType.id,
+            startDate: request.startDate,
+            endDate: request.endDate,
+            note: request.note,
+          }),
+        })
+      },
       onSettled: () => {
         submitting.current = false
         setOpen(false)
@@ -37,16 +56,16 @@ function CancelAction({ request }: Readonly<{ request: LeaveRequest }>) {
   return (
     <>
       <Button variant="outline" onClick={() => setOpen(true)}>
-        Cancel request
+        {resubmit ? 'Cancel and resubmit' : 'Cancel request'}
       </Button>
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}
-        title="Cancel this request?"
+        title={resubmit ? 'Cancel and send a new request?' : 'Cancel this request?'}
         description={`Your ${request.leaveType.name} request for ${formatDateRange(request.startDate, request.endDate)} will be ${
           isApproved ? 'cancelled. Any days it used are returned to your balance.' : 'withdrawn.'
-        }`}
-        confirmLabel="Cancel request"
+        }${resubmit ? ' A new request form opens with the same details, ready to change.' : ''}`}
+        confirmLabel={resubmit ? 'Cancel and resubmit' : 'Cancel request'}
         destructive
         isPending={cancel.isPending}
         onConfirm={confirm}
@@ -101,7 +120,23 @@ export default function RequestDetailPage() {
         title={`${request.leaveType.name} request`}
         description={isOwner ? undefined : `Requested by ${request.requester.name}`}
         breadcrumbs={[...BREADCRUMBS, { label: request.leaveType.name }]}
-        actions={canCancel ? <CancelAction request={request} /> : undefined}
+        actions={
+          canCancel ? (
+            <>
+              {isPending && (
+                <Button
+                  variant="outline"
+                  render={<Link to={requestEditPath(request.id)} />}
+                  nativeButton={false}
+                >
+                  Edit
+                </Button>
+              )}
+              {!isPending && <CancelAction request={request} resubmit />}
+              <CancelAction request={request} />
+            </>
+          ) : undefined
+        }
       />
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>

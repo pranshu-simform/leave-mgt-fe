@@ -3,6 +3,9 @@ import type {
   LeaveRequest,
   LeaveRequestListParams,
   RequestEvent,
+  RequestPayload,
+  RequestPreview,
+  UpdatePayload,
 } from '@/features/leave-requests/types/leaveRequestTypes'
 import {
   apiClient,
@@ -37,6 +40,30 @@ export const leaveRequestApi = {
       { params: { page, limit } },
     )
     return { items: response.data, pagination: response.pagination }
+  },
+
+  preview: async (payload: RequestPayload) => {
+    const response = await apiClient.post<ApiResponse<RequestPreview>>(
+      API_ROUTES.LEAVE_REQUESTS.PREVIEW,
+      payload,
+    )
+    return response.data
+  },
+
+  create: async (payload: RequestPayload) => {
+    const response = await apiClient.post<ApiResponse<LeaveRequest>>(
+      API_ROUTES.LEAVE_REQUESTS.CREATE,
+      payload,
+    )
+    return response.data
+  },
+
+  update: async (id: string, payload: UpdatePayload) => {
+    const response = await apiClient.patch<ApiResponse<LeaveRequest>>(
+      API_ROUTES.LEAVE_REQUESTS.UPDATE.replace(':id', id),
+      payload,
+    )
+    return response.data
   },
 
   cancel: async (id: string) => {

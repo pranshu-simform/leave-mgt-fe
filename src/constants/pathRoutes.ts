@@ -36,19 +36,30 @@ export const PATH_ROUTES = {
     // Also the active entry on /requests/:id.
     NAV: { LABEL: 'My requests', ICON: CalendarDaysIcon },
   },
+  NEW_REQUEST: {
+    PATH: '/requests/new',
+    ALLOWED_ROLES: [],
+    COMPONENT: lazy(() => import('@/features/leave-requests/pages/NewRequestPage')),
+  },
   REQUEST_DETAIL: {
     PATH: '/requests/:id',
     ALLOWED_ROLES: [],
     COMPONENT: lazy(() => import('@/features/leave-requests/pages/RequestDetailPage')),
   },
+  REQUEST_EDIT: {
+    PATH: '/requests/:id/edit',
+    ALLOWED_ROLES: [],
+    COMPONENT: lazy(() => import('@/features/leave-requests/pages/EditRequestPage')),
+  },
 } satisfies Record<string, PathRoute>
 
 export const LOGIN_PATH = '/login'
 
-// Links to screens that have no entry above yet, and the path builders for dynamic routes.
-export const NEW_REQUEST_PATH = '/requests/new'
+// Path builders for the dynamic routes.
 export const requestDetailPath = (id: string): string =>
   PATH_ROUTES.REQUEST_DETAIL.PATH.replace(':id', id)
+export const requestEditPath = (id: string): string =>
+  PATH_ROUTES.REQUEST_EDIT.PATH.replace(':id', id)
 
 // Dev only: Vite removes this (and the page's chunk) from the production build. It needs no
 // sign-in, so the style guide works without the API.
