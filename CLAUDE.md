@@ -39,7 +39,7 @@ Features: auth, dashboard, leave-requests, approvals, calendar, admin (plus the 
 - **Query keys:** only from `constants/queryKeys.ts`. Never inline strings. Detail queries use `enabled: !!id`.
 - **Hooks:** one hook per file, `use<Action>.ts`. Mutations invalidate `QUERY_KEYS.<X>.ALL` and `DETAIL(id)`. Errors go through `handleApiError(error, fallback)`, toasts through `showSuccess` / `showError`.
 - **Forms:** react-hook-form + `zodResolver`, `mode: "onChange"`, `<form noValidate>`, a `FormGroup` per field, `defaultValues` for every field, submit disabled while `isSubmitting || isPending`. Server `details` (`{ field, message }`) map to fields with `setError`. Schemas live in `features/<f>/schemas/<f>Schema.ts`.
-- **Tables:** server-side `DataTable` with `useTableFilters`. Pagination is page-based with totals: send `page` (1-based) and `limit` (`PAGE_SIZE_OPTIONS`, default `DEFAULT_PAGE_SIZE`); read `pagination.total` and `totalPages`.
+- **Tables:** server-side `DataTable` with `useTableFilters` (filters, page and page size live in the URL search params). Pagination is page-based with totals: send `page` (1-based) and `limit` (`PAGE_SIZE_OPTIONS`, default `DEFAULT_PAGE_SIZE`); read `pagination.total` and `totalPages`. See the `datatable-integration` skill.
 - **Routing:** a private screen is one entry in `PATH_ROUTES` (`PATH`, lazy `COMPONENT`, `ALLOWED_ROLES`, optional `NAV { LABEL, ICON }`). The route, the `RoleRoute` guard and the sidebar entry (`lib/navigation.ts`) all derive from it, so never hand-register a route or a nav item. Everything private renders inside `routes/PrivateLayout.tsx`. Roles are `EMPLOYEE`, `MANAGER`, `HR_ADMIN` (`USER_ROLES`). The guard is a convenience; the API is the authority.
 - **Pages** are default exports (lazy loading needs it). Everything else is a named export. Props are `Readonly<Props>`.
 - **No optimistic updates** on leave state changes. Invalidate queries after the mutation settles.
@@ -55,7 +55,9 @@ Features: auth, dashboard, leave-requests, approvals, calendar, admin (plus the 
 
 ## Dates
 
-Date-only values are `YYYY-MM-DD` strings. Use the helpers in `lib/dates.ts`. Never build a `Date` from a date-only string, and never format through UTC.
+Date-only values are `YYYY-MM-DD` strings. Use the helpers in `lib/dates.ts` (`parseIsoDate`, `toIsoDate`, `formatDate`, `formatDateRange`, `formatDateTime`, `todayLocalIso`). They parse and format with local calendar parts, so no timezone can move a date. Never build a `Date` from a date-only string (`new Date('2026-03-01')` is UTC midnight and shows the previous day west of UTC), and never format through UTC. Timestamps from the API (`createdAt`) are instants and are shown in local time with `formatInstantDate` / `formatDateTime`.
+
+**"Today" in the browser** (`todayLocalIso()`) is only for display, for example what counts as upcoming. The server decides every rule with its own UTC date, which can differ by a day. Never check a rule (retroactive, notice, cancel) in the browser: disable nothing based on it that the server also decides, and show the server's message when they disagree.
 
 ## UI rules
 
@@ -63,7 +65,8 @@ Date-only values are `YYYY-MM-DD` strings. Use the helpers in `lib/dates.ts`. Ne
 - **Type by role:** `text-display`, `text-h1` to `text-h3`, `text-body`, `text-body-sm`, `text-label`, `text-caption`. Not `text-2xl`.
 - **Glass:** cards and overlays are glass automatically (`data-slot` mapping in `styles/glass.css`). Use `glass`, `glass-raised` or `glass-overlay` only for a custom surface. No blur on table rows or list items, at most two overlapping blurred layers, and never write `-webkit-backdrop-filter` (the build adds it).
 - **Status** is a `StatusBadge` (icon + label + tone from `constants/leaveStatus.ts`). Brand gradients are never used for status. One gradient primary button per view.
-- Use the shared patterns instead of rebuilding them: `AppShell`, `PageHeader`, `EmptyState`, `ErrorState`, `TableSkeleton`, `CardSkeleton`, `PageLoader`, `FormGroup`, `WithTooltip`, `ConfirmDialog`.
+- Use the shared patterns instead of rebuilding them: `AppShell`, `PageHeader`, `EmptyState`, `ErrorState`, `TableSkeleton`, `CardSkeleton`, `PageLoader`, `FormGroup`, `AppSelect`, `DataTable`, `WithTooltip`, `ConfirmDialog`.
+- **A mutation button guards against a double click itself:** the pending state re-renders after the second click can arrive, so take a synchronous lock (a ref) in the handler. The server still answers the second with a 409, which would show an error beside the success (see `CancelAction`).
 - **Disabled actions carry a tooltip** explaining why (`WithTooltip`). Never leave a disabled button unexplained.
 - Do not convey status by colour alone. Pair it with text or an icon.
 - Dialogs trap focus and restore it. Date pickers work from the keyboard.

@@ -7,8 +7,16 @@ export const API_ROUTES = {
     LOGOUT: `${API_V1}/auth/logout`,
     ME: `${API_V1}/auth/me`,
   },
-  HEALTH: {
-    LIVE: '/health',
-    READY: '/health/ready',
+  LEAVE_TYPES: {
+    LIST: `${API_V1}/leave-types`,
+  },
+  BALANCES: {
+    ME: `${API_V1}/balances/me`,
+  },
+  LEAVE_REQUESTS: {
+    LIST: `${API_V1}/leave-requests`,
+    GET: `${API_V1}/leave-requests/:id`,
+    HISTORY: `${API_V1}/leave-requests/:id/history`,
+    CANCEL: `${API_V1}/leave-requests/:id/cancel`,
   },
 } as const
