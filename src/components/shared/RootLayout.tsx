@@ -1,5 +1,4 @@
 import { Link, Outlet } from 'react-router'
-import { Button } from '@/components/ui/button'
 
 export function RootLayout() {
   return (
@@ -8,9 +7,6 @@ export function RootLayout() {
         <Link to="/" className="font-semibold">
           Leave & Attendance
         </Link>
-        <Button variant="outline" size="sm">
-          Sign in
-        </Button>
       </header>
       <main className="p-6">
         <Outlet />

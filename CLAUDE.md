@@ -36,16 +36,17 @@ Features: auth, dashboard, leave-requests, approvals, calendar, admin. Use the `
 - **Hooks:** one hook per file, `use<Action>.ts`. Mutations invalidate `QUERY_KEYS.<X>.ALL` and `DETAIL(id)`. Errors go through `handleApiError(error, fallback)`, toasts through `showSuccess` / `showError`.
 - **Forms:** react-hook-form + `zodResolver`, `mode: "onChange"`, `<form noValidate>`, a `FormGroup` per field, `defaultValues` for every field, submit disabled while `isSubmitting || isPending`. Server `issues` map to fields with `setError`. Schemas live in `features/<f>/schemas/<f>Schema.ts`.
 - **Tables:** server-side `DataTable` with `useTableFilters`. Pagination is cursor-based ("load more" or next/prev cursors).
-- **Routing:** path, `ALLOWED_ROLES` and the lazy component are co-located in `PATH_ROUTES`. Roles are `EMPLOYEE`, `MANAGER`, `HR_ADMIN`. Wrap private routes in `RoleRoute`.
+- **Routing:** path and the lazy component are co-located in `PATH_ROUTES` (`ALLOWED_ROLES` and `RoleRoute` arrive in Phase 8). Roles will be `EMPLOYEE`, `MANAGER`, `HR_ADMIN`.
 - **Pages** are default exports (lazy loading needs it). Everything else is a named export. Props are `Readonly<Props>`.
 - **No optimistic updates** on leave state changes. Invalidate queries after the mutation settles.
 
 ## API client and auth
 
-- `lib/apiClient.ts` is an axios singleton with `withCredentials: true` and `X-Requested-With` on every request. **No token handling.** Both tokens are httpOnly cookies.
+- `lib/apiClient.ts` is a `class ApiClient` singleton (coco-fe style) over axios, with `withCredentials: true`. Its verbs (`get`, `post`, `put`, `patch`, `delete`) resolve to the response body, and every failure is thrown as an `ApiError { status, code, message, details }` (`createApiError` reads the API's `{ error: { code, message } }`; no response at all is status 0, code `NETWORK_ERROR`). **No token handling.** Both tokens will be httpOnly cookies. `X-Requested-With` is added in Phase 2.
 - On 401 it queues concurrent requests and runs one `POST /auth/refresh`, then retries. A failed refresh dispatches `FORCE_LOGOUT`.
-- `baseURL` is `/api`. In dev, Vite proxies `/api` to the backend, so cookies stay same-origin.
-- Errors are normalised to `ApiError { message, status, code, details }`.
+- The browser calls the API directly at `VITE_API_BASE_URL` (`http://localhost:4000` in dev, with no `/api`; `API_CONFIG.BASE_URL` in `constants/constant.ts` appends `/api`). That is cross-origin, so the API's CORS middleware must allow this app's URL (`FRONTEND_ORIGIN`), and Vite is pinned to port 5173 (`strictPort`). Business routes are written `${API_V1}/…` in `constants/apiRoutes.ts` (`API_V1 = '/v1'`); health routes are unversioned.
+- `lib/queryClient.ts` uses `REACT_QUERY_CONFIG` from `constants/constant.ts`: 2-minute stale time, up to 3 retries with exponential backoff, and never a retry on a 4xx.
+- Errors are normalized to `ApiError { message, status, code, details }`.
 - `AuthContext` reads `useQuery(QUERY_KEYS.AUTH.ME)` with `staleTime: Infinity`. Read the user from context; do not refetch it.
 
 ## Dates

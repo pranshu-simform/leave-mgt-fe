@@ -11,13 +11,13 @@ Contract reference: `PHASES.md` Part C (routes) and Part A12 (error codes).
 
 ```ts
 LEAVE_REQUESTS: {
-  LIST: "/leave-requests",
-  GET: "/leave-requests/:id",
-  APPROVE: "/leave-requests/:id/approve",
+  LIST: `${API_V1}/leave-requests`,
+  GET: `${API_V1}/leave-requests/:id`,
+  APPROVE: `${API_V1}/leave-requests/:id/approve`,
 },
 ```
 
-Paths are relative to the `/api` base URL. Dynamic segments use `:id`, replaced with `.replace(":id", id)`.
+Paths are relative to the `/api` base URL. Business routes start with `${API_V1}` (`/v1`); only operational routes such as health are unversioned. Dynamic segments use `:id`, replaced with `.replace(":id", id)`.
 
 ## 2. Query key: `constants/queryKeys.ts`
 
