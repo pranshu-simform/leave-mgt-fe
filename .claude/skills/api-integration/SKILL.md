@@ -42,7 +42,7 @@ export const approvalApi = {
 }
 ```
 
-`apiClient.get<T>()` resolves to the response body (the envelope). The module then returns the envelope's `data`, or `{ items: response.data, pagination: response.pagination }` as `PaginatedResult<T>` for a list, so hooks never see `success`. Cookies and `X-Requested-With` are handled by it.
+`apiClient.get<T>()` resolves to the response body (the envelope). The module then returns the envelope's `data`, or `{ items: response.data, pagination: response.pagination }` as `PaginatedResult<T>` for a list, so hooks never see `success`. Cookies are handled by it (`withCredentials`).
 
 ## 5. Hooks: one per file
 
