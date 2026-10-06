@@ -43,3 +43,52 @@ export interface RequestEvent {
   createdAt: string
   actor: { id: string; name: string }
 }
+
+export interface RequestPayload {
+  leaveTypeId: string
+  startDate: string
+  endDate: string
+  note?: string
+}
+
+export interface UpdatePayload {
+  startDate: string
+  endDate: string
+  note?: string
+  // The version the user last saw; the server refuses the edit if the request has changed since.
+  version: number
+}
+
+export type ViolationCode =
+  | 'CROSS_YEAR_RANGE'
+  | 'NO_WORKING_DAYS'
+  | 'RETROACTIVE_NOT_ALLOWED'
+  | 'NOTICE_TOO_SHORT'
+  | 'MAX_DAYS_EXCEEDED'
+  | 'NOTE_REQUIRED'
+  | 'INSUFFICIENT_BALANCE'
+
+export interface RequestViolation {
+  code: ViolationCode
+  // The form field the problem belongs to: startDate, endDate or note.
+  field: string
+  message: string
+}
+
+export interface AbsenceItem {
+  requestId: string
+  userId: string
+  name: string
+  leaveType: { code: string; name: string }
+  startDate: string
+  endDate: string
+  status: 'PENDING' | 'APPROVED'
+}
+
+export interface RequestPreview {
+  days: number
+  violations: RequestViolation[]
+  balance: { allowance: number; used: number; remaining: number; remainingAfter: number } | null
+  // Null when there are no working days to compare.
+  overlaps: { overlapping: AbsenceItem[]; peakConcurrent: number; teamSize: number } | null
+}

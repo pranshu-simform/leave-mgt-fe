@@ -16,6 +16,9 @@ export const API_ROUTES = {
   LEAVE_REQUESTS: {
     LIST: `${API_V1}/leave-requests`,
     GET: `${API_V1}/leave-requests/:id`,
+    PREVIEW: `${API_V1}/leave-requests/preview`,
+    CREATE: `${API_V1}/leave-requests`,
+    UPDATE: `${API_V1}/leave-requests/:id`,
     HISTORY: `${API_V1}/leave-requests/:id/history`,
     CANCEL: `${API_V1}/leave-requests/:id/cancel`,
   },

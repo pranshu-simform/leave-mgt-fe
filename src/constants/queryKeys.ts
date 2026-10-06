@@ -13,6 +13,7 @@ export const QUERY_KEYS = {
     ALL: ['leave-requests'] as const,
     LIST: (params?: object) => ['leave-requests', 'list', ...(params ? [params] : [])] as const,
     DETAIL: (id: string) => ['leave-requests', 'detail', id] as const,
+    PREVIEW: (params: object) => ['leave-requests', 'preview', params] as const,
     HISTORY: (id: string, page?: number) =>
       ['leave-requests', 'history', id, ...(page ? [page] : [])] as const,
   },

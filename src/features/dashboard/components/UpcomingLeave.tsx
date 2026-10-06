@@ -2,7 +2,7 @@ import { CalendarCheckIcon } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
 import { EmptyState, ErrorState, TableSkeleton } from '@/components/shared'
-import { NEW_REQUEST_PATH, requestDetailPath } from '@/constants/pathRoutes'
+import { PATH_ROUTES, requestDetailPath } from '@/constants/pathRoutes'
 import { useMyRequests } from '@/features/leave-requests/hooks/useMyRequests'
 import { formatDateRange, todayLocalIso } from '@/lib/dates'
 
@@ -34,7 +34,7 @@ export function UpcomingLeave() {
             title="No upcoming leave"
             description="Approved leave that has not ended yet shows up here."
             action={
-              <Button render={<Link to={NEW_REQUEST_PATH} />} nativeButton={false}>
+              <Button render={<Link to={PATH_ROUTES.NEW_REQUEST.PATH} />} nativeButton={false}>
                 Request leave
               </Button>
             }

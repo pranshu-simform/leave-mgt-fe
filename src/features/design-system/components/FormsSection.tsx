@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FormGroup } from '@/components/shared'
+import { DateRangePicker, FormGroup, type DateRangeValue } from '@/components/shared'
 import {
   Checkbox,
   Input,
@@ -21,6 +21,7 @@ const LEAVE_TYPES = [
 
 export function FormsSection() {
   const [type, setType] = useState<string | null>('annual')
+  const [range, setRange] = useState<DateRangeValue>({ start: '', end: '' })
   return (
     <Section
       id="forms"
@@ -45,6 +46,14 @@ export function FormsSection() {
                 ))}
               </SelectContent>
             </Select>
+          )}
+        </FormGroup>
+        <FormGroup
+          label="Dates"
+          description="Click the first day, then the last. The same day twice is one day."
+        >
+          {(controlProps) => (
+            <DateRangePicker {...controlProps} value={range} onChange={setRange} />
           )}
         </FormGroup>
         <FormGroup label="Start date" error="Start date cannot be in the past." required>
