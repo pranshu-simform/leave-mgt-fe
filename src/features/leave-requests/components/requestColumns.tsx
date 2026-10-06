@@ -8,6 +8,7 @@ export const requestColumns: readonly Column<LeaveRequest>[] = [
   {
     id: 'type',
     header: 'Type',
+    mobile: 'title',
     cell: (request) => (
       <Link to={requestDetailPath(request.id)} className="font-medium hover:underline">
         {request.leaveType.name}
@@ -30,11 +31,13 @@ export const requestColumns: readonly Column<LeaveRequest>[] = [
   {
     id: 'status',
     header: 'Status',
+    mobile: 'status',
     cell: (request) => <StatusBadge status={request.status} />,
   },
   {
     id: 'submitted',
     header: 'Submitted',
+    mobile: 'hidden',
     className: 'whitespace-nowrap text-muted-foreground',
     cell: (request) => formatInstantDate(request.createdAt),
   },

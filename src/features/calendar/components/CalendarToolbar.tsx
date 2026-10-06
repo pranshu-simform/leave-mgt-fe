@@ -53,7 +53,7 @@ export function CalendarToolbar({
         )}
       </div>
       {teamOptions && onTeamChange && (
-        <div className="w-60">
+        <div className="w-full sm:w-60">
           <FormGroup label="Team">
             {(controlProps) => (
               <AppSelect

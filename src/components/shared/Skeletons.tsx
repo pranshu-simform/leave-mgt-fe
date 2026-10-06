@@ -24,6 +24,27 @@ export function TableSkeleton({ rows = 5, columns = 4 }: Readonly<TableSkeletonP
   )
 }
 
+export function CardListSkeleton({ rows = 4 }: Readonly<{ rows?: number }>) {
+  return (
+    <div
+      role="status"
+      aria-busy="true"
+      aria-label="Loading"
+      className="flex flex-col gap-3 rounded-xl border border-border p-4"
+    >
+      {Array.from({ length: rows }, (_, row) => (
+        <div key={row} className="flex flex-col gap-2 border-b border-border pb-3 last:border-0">
+          <div className="flex justify-between gap-3">
+            <Skeleton className="h-5 w-1/3" />
+            <Skeleton className="h-5 w-16" />
+          </div>
+          <Skeleton className="h-4 w-2/3" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function CardSkeleton() {
   return (
     <Card role="status" aria-busy="true" aria-label="Loading">

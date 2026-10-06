@@ -1,6 +1,6 @@
 import { CalendarCheck2Icon } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { useEffect, useRef, type MouseEvent, type ReactNode } from 'react'
 import { NavLink, useLocation } from 'react-router'
 import {
   Separator,
@@ -19,6 +19,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui'
+import { APP_NAME } from '@/constants/constant'
 import { ThemeToggle } from './ThemeToggle'
 
 export interface NavItem {
@@ -31,7 +32,7 @@ export interface NavItem {
 interface AppShellProps {
   navItems: NavItem[]
   brand?: string
-  // Where the signed-in user's menu goes (Phase 8).
+  // Where the signed-in user's menu goes.
   userMenu?: ReactNode
   children: ReactNode
 }
@@ -68,12 +69,36 @@ function NavMenu({ navItems }: Readonly<{ navItems: NavItem[] }>) {
 // The frame of every signed-in page. It knows nothing about roles: the caller passes the nav items.
 export function AppShell({
   navItems,
-  brand = 'Leave & Attendance',
+  brand = APP_NAME,
   userMenu,
   children,
 }: Readonly<AppShellProps>) {
+  const { pathname } = useLocation()
+  const mainRef = useRef<HTMLElement>(null)
+  const previousPath = useRef(pathname)
+
+  // After a navigation focus moves to the page, so a keyboard or screen reader user starts there and
+  // not on the link they just used. A new query string (a filter, the review sheet) is not one.
+  useEffect(() => {
+    if (previousPath.current === pathname) return
+    previousPath.current = pathname
+    mainRef.current?.focus({ preventScroll: true })
+  }, [pathname])
+
+  const skipToContent = (event: MouseEvent) => {
+    event.preventDefault()
+    mainRef.current?.focus()
+  }
+
   return (
     <SidebarProvider>
+      <a
+        href="#main-content"
+        onClick={skipToContent}
+        className="sr-only z-50 rounded-md bg-popover text-label shadow-lg ring-2 ring-ring focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:px-3 focus:py-2"
+      >
+        Skip to main content
+      </a>
       <Sidebar variant="floating" collapsible="icon">
         <SidebarHeader>
           <div className="flex items-center gap-2 px-1 py-1">
@@ -88,7 +113,9 @@ export function AppShell({
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupContent>
-              <NavMenu navItems={navItems} />
+              <nav aria-label="Main">
+                <NavMenu navItems={navItems} />
+              </nav>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
@@ -103,7 +130,12 @@ export function AppShell({
             <ThemeToggle />
           </div>
         </header>
-        <main className="mx-auto w-full max-w-content flex-1 animate-fade-rise px-gutter py-6">
+        <main
+          id="main-content"
+          ref={mainRef}
+          tabIndex={-1}
+          className="mx-auto w-full max-w-content flex-1 animate-fade-rise px-gutter py-6 outline-none"
+        >
           {children}
         </main>
       </SidebarInset>

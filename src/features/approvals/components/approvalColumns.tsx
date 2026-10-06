@@ -10,6 +10,7 @@ export function buildApprovalColumns(
     {
       id: 'employee',
       header: 'Employee',
+      mobile: 'title',
       className: 'font-medium',
       cell: (request) => request.requester.name,
     },
@@ -30,13 +31,20 @@ export function buildApprovalColumns(
     {
       id: 'submitted',
       header: 'Submitted',
+      mobile: 'hidden',
       className: 'whitespace-nowrap text-muted-foreground',
       cell: (request) => formatInstantDate(request.createdAt),
     },
-    { id: 'status', header: 'Status', cell: (request) => <StatusBadge status={request.status} /> },
+    {
+      id: 'status',
+      header: 'Status',
+      mobile: 'status',
+      cell: (request) => <StatusBadge status={request.status} />,
+    },
     {
       id: 'actions',
       header: 'Review',
+      mobile: 'action',
       align: 'end',
       cell: (request) => (
         <Button

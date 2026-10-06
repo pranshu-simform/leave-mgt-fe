@@ -1,13 +1,21 @@
+import { CompassIcon } from 'lucide-react'
 import { Link } from 'react-router'
 import { Button } from '@/components/ui'
+import { usePageTitle } from '@/hooks/usePageTitle'
+import { EmptyState } from './EmptyState'
 
 export function PageNotFound() {
+  usePageTitle('Page not found')
   return (
-    <div className="space-y-4 text-center">
-      <h1 className="text-2xl font-semibold">Page not found</h1>
-      <Button render={<Link to="/" />} nativeButton={false}>
-        Back home
-      </Button>
-    </div>
+    <EmptyState
+      icon={CompassIcon}
+      title="Page not found"
+      description="That address does not match a page here. It may have moved, or the link may be mistyped."
+      action={
+        <Button render={<Link to="/" />} nativeButton={false}>
+          Back home
+        </Button>
+      }
+    />
   )
 }

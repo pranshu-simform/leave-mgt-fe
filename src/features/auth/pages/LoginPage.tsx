@@ -20,6 +20,7 @@ import { TONE_CLASSES } from '@/components/shared'
 import { useLogin } from '@/features/auth/hooks/useLogin'
 import { loginSchema, type LoginFormData } from '@/features/auth/schemas/authSchema'
 import { useAuth } from '@/hooks/useAuth'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import { isApiError } from '@/lib/apiClient'
 import { cn } from '@/lib/utils'
 
@@ -44,6 +45,7 @@ function returnPath(state: unknown): string {
 }
 
 export default function LoginPage() {
+  usePageTitle('Sign in')
   const { user, isLoading } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()

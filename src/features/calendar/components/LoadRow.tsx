@@ -34,7 +34,7 @@ export function LoadRow({ days, holidayDates, load }: Readonly<LoadRowProps>) {
     <tr>
       <th
         scope="row"
-        className="sticky left-0 z-10 bg-popover px-3 py-1 text-left text-label font-medium"
+        className="sticky left-0 z-10 bg-popover px-2 py-1 text-left text-label font-medium sm:px-3"
       >
         Away{teamSize ? ` of ${teamSize}` : ''}
       </th>

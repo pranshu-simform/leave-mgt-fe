@@ -1,6 +1,7 @@
 import { ChevronRightIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
+import { usePageTitle } from '@/hooks/usePageTitle'
 
 interface Crumb {
   label: string
@@ -20,6 +21,7 @@ export function PageHeader({
   breadcrumbs,
   actions,
 }: Readonly<PageHeaderProps>) {
+  usePageTitle(title)
   return (
     <header className="flex flex-col gap-4 pb-6 sm:flex-row sm:items-end sm:justify-between">
       <div className="flex min-w-0 flex-col gap-1.5">

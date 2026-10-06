@@ -51,7 +51,7 @@ The query hook uses `placeholderData: keepPreviousData` so the rows stay while t
 - Query keys include `params`, so each page and filter combination caches separately (`QUERY_KEYS.X.LIST(params)`).
 - Page size options come from `PAGE_SIZE_OPTIONS` (25, 50, 75, 100) and the default from `DEFAULT_PAGE_SIZE`. The server caps `limit` at 100.
 - When `totalPages` shrinks (a filter or a deletion) and the current page no longer exists, go back to the last page (an effect in the page: `if (totalPages > 0 && page > totalPages) setPage(totalPages)`).
-- Define columns as a `Column<T>[]` in the feature (`components/<x>Columns.tsx`): a link in the first cell, `StatusBadge` for status, dates through `lib/dates.ts`. A table scrolls sideways inside its card on a phone until the Phase 12 responsive pass.
+- Define columns as a `Column<T>[]` in the feature (`components/<x>Columns.tsx`): a link in the first cell, `StatusBadge` for status, dates through `lib/dates.ts`. Give each column a `mobile` role for the phone card layout (under 768 px): `title` for the identity column (the link), `status` for the badge, `action` for a row button, `hidden` for what a phone does not need; any other column becomes a labeled detail line. `DataTable` renders either the table or the cards, never both.
 - Row actions: a disabled action has a tooltip with the reason. Mutation buttons are disabled while pending.
 - Always render loading, error (with retry) and empty states.
 - Calendar and timeline views are not tables: page the people (rows), window the days, and use `/calendar/summary` for company-wide counts.
