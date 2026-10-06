@@ -1,6 +1,7 @@
 import { QueryClient } from '@tanstack/react-query'
 
 import { REACT_QUERY_CONFIG } from '@/constants/constant'
+import { QUERY_KEYS } from '@/constants/queryKeys'
 import { isApiError } from '@/lib/apiClient'
 
 function isClientError(error: unknown): boolean {
@@ -42,3 +43,11 @@ export const queryClient = new QueryClient({
     },
   },
 })
+
+// Drops everything that belongs to the signed-in user and marks the session as signed out. Used on
+// sign-in, sign-out and a failed refresh, so one user's data can never show up for the next.
+export async function clearUserData(): Promise<void> {
+  await queryClient.cancelQueries()
+  queryClient.removeQueries({ predicate: (query) => query.queryKey[0] !== QUERY_KEYS.AUTH.ME[0] })
+  queryClient.setQueryData(QUERY_KEYS.AUTH.ME, null)
+}
