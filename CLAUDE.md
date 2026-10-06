@@ -4,6 +4,10 @@ Vite 8, React 19, TypeScript, TanStack Query v5, react-router 8, react-hook-form
 
 Path alias: `@/` → `src/`. Relative `../../` imports into `src/` are forbidden.
 
+## Docker
+
+`frontend/Dockerfile` builds the app and serves `dist/` with nginx (`nginx.conf`: single-page fallback, immutable caching of `/assets/`, no caching of `index.html`). `VITE_API_BASE_URL` is a **build argument**, compiled into the bundle (the root compose file derives it from `PUBLIC_HOST` and `API_PORT`), not a runtime setting. The browser still calls the API directly; there is no proxy.
+
 ## Commands
 
 - `pnpm dev`, `pnpm build` (`tsc -b && vite build`), `pnpm preview`
