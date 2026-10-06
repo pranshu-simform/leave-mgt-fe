@@ -8,6 +8,12 @@ export const QUERY_KEYS = {
   BALANCES: {
     ALL: ['balances'] as const,
     ME: (year?: number) => ['balances', 'me', ...(year ? [year] : [])] as const,
+    USER: (userId: string, year: number) => ['balances', 'user', userId, year] as const,
+  },
+  APPROVALS: {
+    ALL: ['approvals'] as const,
+    LIST: (params?: object) => ['approvals', 'list', ...(params ? [params] : [])] as const,
+    OVERLAPS: (id: string) => ['approvals', 'overlaps', id] as const,
   },
   LEAVE_REQUESTS: {
     ALL: ['leave-requests'] as const,

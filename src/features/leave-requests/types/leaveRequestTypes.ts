@@ -85,10 +85,17 @@ export interface AbsenceItem {
   status: 'PENDING' | 'APPROVED'
 }
 
+// Who else on the team is off during a request, and how crowded the busiest day gets.
+export interface OverlapSummary {
+  overlapping: AbsenceItem[]
+  peakConcurrent: number
+  teamSize: number
+}
+
 export interface RequestPreview {
   days: number
   violations: RequestViolation[]
   balance: { allowance: number; used: number; remaining: number; remainingAfter: number } | null
   // Null when there are no working days to compare.
-  overlaps: { overlapping: AbsenceItem[]; peakConcurrent: number; teamSize: number } | null
+  overlaps: OverlapSummary | null
 }

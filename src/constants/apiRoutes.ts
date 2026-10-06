@@ -12,6 +12,13 @@ export const API_ROUTES = {
   },
   BALANCES: {
     ME: `${API_V1}/balances/me`,
+    USER: `${API_V1}/users/:id/balances`,
+  },
+  APPROVALS: {
+    LIST: `${API_V1}/approvals`,
+    OVERLAPS: `${API_V1}/approvals/:id/overlaps`,
+    APPROVE: `${API_V1}/leave-requests/:id/approve`,
+    REJECT: `${API_V1}/leave-requests/:id/reject`,
   },
   LEAVE_REQUESTS: {
     LIST: `${API_V1}/leave-requests`,
