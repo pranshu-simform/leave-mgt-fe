@@ -1,6 +1,6 @@
 import { lazy, Suspense, type ReactNode } from 'react'
 import type { RouteObject } from 'react-router'
-import { PageLoader, PageNotFound, RoleRoute } from '@/components/shared'
+import { PageLoader, PageNotFound, RoleRoute, RouteErrorPage } from '@/components/shared'
 import { DEV_ROUTES, LOGIN_PATH, PATH_ROUTES, type PathRoute } from '@/constants/pathRoutes'
 import { DevLayout } from '@/routes/DevLayout'
 import { PrivateLayout } from '@/routes/PrivateLayout'
@@ -26,7 +26,7 @@ function buildRoute({
 }
 
 export const routes: RouteObject[] = [
-  { path: LOGIN_PATH, element: withSuspense(<LoginPage />) },
+  { path: LOGIN_PATH, element: withSuspense(<LoginPage />), errorElement: <RouteErrorPage /> },
   ...(import.meta.env.DEV
     ? [
         {
@@ -41,9 +41,16 @@ export const routes: RouteObject[] = [
   {
     path: '/',
     element: <PrivateLayout />,
+    errorElement: <RouteErrorPage />,
     children: [
-      ...Object.values<PathRoute>(PATH_ROUTES).map(buildRoute),
-      { path: '*', element: <PageNotFound /> },
+      {
+        // A pathless wrapper, so an error in a page is shown inside the shell and not instead of it.
+        errorElement: <RouteErrorPage />,
+        children: [
+          ...Object.values<PathRoute>(PATH_ROUTES).map(buildRoute),
+          { path: '*', element: <PageNotFound /> },
+        ],
+      },
     ],
   },
 ]

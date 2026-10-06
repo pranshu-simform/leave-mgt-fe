@@ -32,9 +32,20 @@ const DEMO_ROWS: DemoRow[] = [
 ]
 
 const DEMO_COLUMNS: readonly Column<DemoRow>[] = [
-  { id: 'type', header: 'Type', cell: (row) => row.type, className: 'font-medium' },
+  {
+    id: 'type',
+    header: 'Type',
+    mobile: 'title',
+    cell: (row) => row.type,
+    className: 'font-medium',
+  },
   { id: 'dates', header: 'Dates', cell: (row) => row.dates },
-  { id: 'status', header: 'Status', cell: (row) => <StatusBadge status={row.status} /> },
+  {
+    id: 'status',
+    header: 'Status',
+    mobile: 'status',
+    cell: (row) => <StatusBadge status={row.status} />,
+  },
 ]
 
 const STATUS_OPTIONS = [

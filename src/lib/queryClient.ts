@@ -47,7 +47,9 @@ export const queryClient = new QueryClient({
 // Drops everything that belongs to the signed-in user and marks the session as signed out. Used on
 // sign-in, sign-out and a failed refresh, so one user's data can never show up for the next.
 export async function clearUserData(): Promise<void> {
+  // The session goes first, so the screens (and their queries) are replaced by the sign-in page
+  // before the data is removed. The other way round, a mounted screen refetches what was removed.
+  queryClient.setQueryData(QUERY_KEYS.AUTH.ME, null)
   await queryClient.cancelQueries()
   queryClient.removeQueries({ predicate: (query) => query.queryKey[0] !== QUERY_KEYS.AUTH.ME[0] })
-  queryClient.setQueryData(QUERY_KEYS.AUTH.ME, null)
 }
