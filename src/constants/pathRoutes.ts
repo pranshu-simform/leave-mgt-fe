@@ -1,5 +1,6 @@
 import {
   CalendarDaysIcon,
+  CalendarRangeIcon,
   ClipboardCheckIcon,
   LayoutDashboardIcon,
   PaletteIcon,
@@ -41,6 +42,12 @@ export const PATH_ROUTES = {
     COMPONENT: lazy(() => import('@/features/leave-requests/pages/MyRequestsPage')),
     // Also the active entry on /requests/:id.
     NAV: { LABEL: 'My requests', ICON: CalendarDaysIcon },
+  },
+  CALENDAR: {
+    PATH: '/calendar',
+    ALLOWED_ROLES: [],
+    COMPONENT: lazy(() => import('@/features/calendar/pages/CalendarPage')),
+    NAV: { LABEL: 'Team calendar', ICON: CalendarRangeIcon },
   },
   NEW_REQUEST: {
     PATH: '/requests/new',

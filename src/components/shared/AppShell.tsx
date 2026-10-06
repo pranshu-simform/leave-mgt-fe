@@ -95,7 +95,7 @@ export function AppShell({
         {userMenu && <SidebarFooter>{userMenu}</SidebarFooter>}
         <SidebarRail />
       </Sidebar>
-      <SidebarInset className="bg-transparent">
+      <SidebarInset className="min-w-0 bg-transparent">
         <header className="sticky top-0 z-20 flex h-header items-center gap-2 px-gutter glass-raised">
           <SidebarTrigger aria-label="Toggle navigation" />
           <Separator orientation="vertical" className="h-5 self-center" />

@@ -1,4 +1,14 @@
-import { format, getYear, isSameMonth, isSameYear, isValid, parse } from 'date-fns'
+import {
+  addMonths as addMonthsTo,
+  format,
+  getDay,
+  getDaysInMonth,
+  getYear,
+  isSameMonth,
+  isSameYear,
+  isValid,
+  parse,
+} from 'date-fns'
 
 // A calendar date is a `YYYY-MM-DD` string everywhere: in the API, in state and in the URL. It is
 // turned into a Date only to be shown or picked, always as local midnight built from its parts, so
@@ -53,4 +63,47 @@ export function formatInstantDate(instant: string): string {
 
 export function formatDateTime(instant: string): string {
   return format(new Date(instant), 'd MMM yyyy, HH:mm')
+}
+
+// Months are 'YYYY-MM' strings, with the same rule as dates: parsed and formatted from local calendar
+// parts, so no timezone can move a day.
+const MONTH = /^20\d{2}-(0[1-9]|1[0-2])$/
+
+export function isValidMonth(month: string): boolean {
+  return MONTH.test(month)
+}
+
+export function currentMonthLocal(): string {
+  return todayLocalIso().slice(0, 7)
+}
+
+export function addMonths(month: string, count: number): string {
+  return format(addMonthsTo(parseIsoDate(`${month}-01`), count), 'yyyy-MM')
+}
+
+export function formatMonth(month: string): string {
+  return format(parseIsoDate(`${month}-01`), 'MMMM yyyy')
+}
+
+// Every day of the month as YYYY-MM-DD.
+export function daysOfMonth(month: string): string[] {
+  const count = getDaysInMonth(parseIsoDate(`${month}-01`))
+  return Array.from(
+    { length: count },
+    (_, index) => `${month}-${String(index + 1).padStart(2, '0')}`,
+  )
+}
+
+export function isWeekend(iso: string): boolean {
+  const day = getDay(parseIsoDate(iso))
+  return day === 0 || day === 6
+}
+
+// "M" for Monday, "T" for Tuesday, and so on; a header label, not a name.
+export function weekdayInitial(iso: string): string {
+  return format(parseIsoDate(iso), 'EEEEE')
+}
+
+export function weekdayName(iso: string): string {
+  return format(parseIsoDate(iso), 'EEEE')
 }
