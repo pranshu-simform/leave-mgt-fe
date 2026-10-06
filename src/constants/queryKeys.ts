@@ -10,6 +10,15 @@ export const QUERY_KEYS = {
     ME: (year?: number) => ['balances', 'me', ...(year ? [year] : [])] as const,
     USER: (userId: string, year: number) => ['balances', 'user', userId, year] as const,
   },
+  CALENDAR: {
+    ALL: ['calendar'] as const,
+    MONTH: (params: object) => ['calendar', 'month', params] as const,
+    SUMMARY: (params: object) => ['calendar', 'summary', params] as const,
+    TEAMS: ['calendar', 'teams'] as const,
+  },
+  HOLIDAYS: {
+    MONTH: (month: string) => ['holidays', month] as const,
+  },
   APPROVALS: {
     ALL: ['approvals'] as const,
     LIST: (params?: object) => ['approvals', 'list', ...(params ? [params] : [])] as const,

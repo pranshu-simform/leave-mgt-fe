@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { PageHeader } from '@/components/shared'
 import { Button } from '@/components/ui'
 import { AccessibilitySection } from '@/features/design-system/components/AccessibilitySection'
+import { CalendarGridSection } from '@/features/design-system/components/CalendarGridSection'
 import { ButtonsSection } from '@/features/design-system/components/ButtonsSection'
 import { ColorsSection } from '@/features/design-system/components/ColorsSection'
 import { DataDisplaySection } from '@/features/design-system/components/DataDisplaySection'
@@ -23,6 +24,7 @@ const SECTIONS = [
   ['data', 'Data display'],
   ['overlays', 'Overlays'],
   ['patterns', 'Patterns'],
+  ['calendar-grid', 'Calendar grid'],
   ['accessibility', 'Accessibility'],
 ] as const
 
@@ -81,6 +83,7 @@ export default function DesignSystemPage() {
       <DataDisplaySection />
       <OverlaysSection />
       <PatternsSection />
+      <CalendarGridSection />
       <AccessibilitySection />
     </div>
   )

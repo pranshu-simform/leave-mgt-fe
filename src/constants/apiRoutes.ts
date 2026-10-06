@@ -14,6 +14,14 @@ export const API_ROUTES = {
     ME: `${API_V1}/balances/me`,
     USER: `${API_V1}/users/:id/balances`,
   },
+  CALENDAR: {
+    MONTH: `${API_V1}/calendar`,
+    SUMMARY: `${API_V1}/calendar/summary`,
+    TEAMS: `${API_V1}/calendar/teams`,
+  },
+  HOLIDAYS: {
+    LIST: `${API_V1}/holidays`,
+  },
   APPROVALS: {
     LIST: `${API_V1}/approvals`,
     OVERLAPS: `${API_V1}/approvals/:id/overlaps`,

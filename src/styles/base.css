@@ -50,3 +50,13 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* A pending leave bar: the leave type's color, lighter, with diagonal hatching, so it reads as "not
+   decided yet" without relying on color alone. The text color decides the hatch color. */
+@utility leave-bar-pending {
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 5px,
+    color-mix(in oklch, currentColor 16%, transparent) 5px 10px
+  );
+}
