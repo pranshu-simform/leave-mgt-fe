@@ -3,7 +3,6 @@ import type { LucideIcon } from 'lucide-react'
 import { useEffect, useRef, type MouseEvent, type ReactNode } from 'react'
 import { NavLink, useLocation } from 'react-router'
 import {
-  Separator,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -123,11 +122,14 @@ export function AppShell({
         <SidebarRail />
       </Sidebar>
       <SidebarInset className="min-w-0 bg-transparent">
-        <header className="sticky top-0 z-20 flex h-header items-center gap-2 px-gutter glass-raised">
-          <SidebarTrigger aria-label="Toggle navigation" />
-          <Separator orientation="vertical" className="h-5 self-center" />
-          <div className="ml-auto flex items-center gap-1">
-            <ThemeToggle />
+        {/* A floating bar with the same extent as the page content (so its edges match the cards below
+            it) and the same top gap as the sidebar card. The outer element only holds the gap. */}
+        <header className="sticky top-0 z-20 pt-2">
+          <div className="mx-auto w-full max-w-content px-gutter">
+            <div className="flex h-header items-center justify-between gap-2 rounded-xl px-2 glass-raised">
+              <SidebarTrigger size="icon" aria-label="Toggle navigation" />
+              <ThemeToggle />
+            </div>
           </div>
         </header>
         <main
