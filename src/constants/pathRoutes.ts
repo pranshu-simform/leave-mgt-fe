@@ -12,4 +12,13 @@ export const PATH_ROUTES = {
     IS_INDEX: true,
     COMPONENT: lazy(() => import('@/features/dashboard/pages/DashboardPage')),
   },
+  // Dev only: Vite removes this branch (and the page's chunk) from the production build.
+  ...(import.meta.env.DEV
+    ? {
+        DESIGN_SYSTEM: {
+          PATH: '/design-system',
+          COMPONENT: lazy(() => import('@/features/design-system/pages/DesignSystemPage')),
+        },
+      }
+    : {}),
 } satisfies Record<string, PathRoute>

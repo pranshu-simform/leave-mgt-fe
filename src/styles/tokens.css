@@ -1,0 +1,294 @@
+/*
+ * Design tokens. Three layers, defined once:
+ *   1. Primitive scales (--teal-500, ...): raw colors. Never used in components.
+ *   2. Semantic tokens (--primary, --success-subtle, --glass-fill, ...): what components use.
+ *   3. Component tokens (--cat-1, --calendar-weekend): only where one component needs its own.
+ * Dark mode redefines the semantic layer, not the components. See docs/DESIGN-SYSTEM.md.
+ */
+
+:root {
+  /* ---------- 1. Primitive scales (oklch) ---------- */
+  --teal-50: oklch(0.985 0.012 192);
+  --teal-100: oklch(0.96 0.03 192);
+  --teal-200: oklch(0.925 0.055 192);
+  --teal-300: oklch(0.87 0.09 192);
+  --teal-400: oklch(0.8 0.115 190);
+  --teal-500: oklch(0.72 0.125 190);
+  --teal-600: oklch(0.63 0.12 191);
+  --teal-700: oklch(0.54 0.105 193);
+  --teal-800: oklch(0.45 0.088 195);
+  --teal-900: oklch(0.38 0.07 198);
+  --teal-950: oklch(0.28 0.05 200);
+
+  --cyan-400: oklch(0.79 0.12 215);
+  --cyan-500: oklch(0.715 0.125 220);
+  --cyan-600: oklch(0.62 0.12 225);
+  --cyan-700: oklch(0.54 0.11 228);
+
+  --indigo-400: oklch(0.7 0.15 275);
+  --indigo-500: oklch(0.6 0.18 275);
+  --indigo-600: oklch(0.52 0.19 275);
+
+  --slate-50: oklch(0.985 0.005 200);
+  --slate-100: oklch(0.965 0.008 200);
+  --slate-200: oklch(0.93 0.01 200);
+  --slate-300: oklch(0.87 0.013 200);
+  --slate-400: oklch(0.7 0.016 203);
+  --slate-500: oklch(0.55 0.02 205);
+  --slate-600: oklch(0.46 0.022 207);
+  --slate-700: oklch(0.37 0.02 210);
+  --slate-800: oklch(0.27 0.018 213);
+  --slate-900: oklch(0.2 0.018 217);
+  --slate-950: oklch(0.15 0.02 220);
+
+  --green-100: oklch(0.955 0.045 152);
+  --green-300: oklch(0.82 0.11 151);
+  --green-600: oklch(0.55 0.135 150);
+  --green-800: oklch(0.4 0.095 150);
+
+  --amber-100: oklch(0.96 0.065 92);
+  --amber-300: oklch(0.86 0.12 85);
+  --amber-600: oklch(0.68 0.15 70);
+  --amber-800: oklch(0.43 0.095 62);
+
+  --red-100: oklch(0.945 0.04 22);
+  --red-300: oklch(0.8 0.09 24);
+  --red-600: oklch(0.53 0.21 27);
+  --red-800: oklch(0.42 0.16 27);
+
+  --blue-100: oklch(0.95 0.035 250);
+  --blue-300: oklch(0.8 0.08 250);
+  --blue-600: oklch(0.52 0.16 255);
+  --blue-800: oklch(0.4 0.13 255);
+
+  /* ---------- 2. Semantic tokens: light ---------- */
+  /* Surfaces and text */
+  --background: oklch(0.985 0.006 200);
+  --foreground: oklch(0.19 0.02 220);
+  --card: var(--glass-fill);
+  --card-foreground: var(--foreground);
+  --popover: var(--glass-fill-overlay);
+  --popover-foreground: var(--foreground);
+  --muted: oklch(0.955 0.01 200 / 0.75);
+  --muted-foreground: oklch(0.46 0.022 207);
+  --surface-sunken: oklch(0.94 0.012 200 / 0.7);
+
+  /* Brand and interaction */
+  --primary: oklch(0.52 0.105 195);
+  --primary-foreground: oklch(0.995 0.004 195);
+  --secondary: oklch(0.96 0.012 200 / 0.8);
+  --secondary-foreground: oklch(0.28 0.04 205);
+  --accent: oklch(0.95 0.04 192 / 0.75);
+  --accent-foreground: oklch(0.32 0.07 197);
+  --ring: oklch(0.58 0.115 192);
+
+  /* Lines. --input is the visible edge of a control and must keep 3:1 contrast. */
+  --border: oklch(0.25 0.03 215 / 0.12);
+  --input: oklch(0.6 0.025 205);
+
+  /* Status families: solid + its text, subtle background + its text, border. Always paired with an icon and text. */
+  --success: oklch(0.52 0.13 150);
+  --success-foreground: oklch(0.995 0.005 150);
+  --success-subtle: oklch(0.95 0.05 150 / 0.85);
+  --success-subtle-foreground: oklch(0.36 0.09 150);
+  --success-border: oklch(0.78 0.1 150);
+
+  --warning: oklch(0.7 0.15 72);
+  --warning-foreground: oklch(0.25 0.05 70);
+  --warning-subtle: oklch(0.96 0.07 90 / 0.85);
+  --warning-subtle-foreground: oklch(0.4 0.09 65);
+  --warning-border: oklch(0.82 0.12 85);
+
+  --danger: oklch(0.53 0.21 27);
+  --danger-foreground: oklch(0.995 0.004 27);
+  --danger-subtle: oklch(0.95 0.04 25 / 0.85);
+  --danger-subtle-foreground: oklch(0.42 0.17 27);
+  --danger-border: oklch(0.8 0.09 25);
+
+  --info: oklch(0.52 0.16 255);
+  --info-foreground: oklch(0.995 0.004 255);
+  --info-subtle: oklch(0.95 0.035 250 / 0.85);
+  --info-subtle-foreground: oklch(0.4 0.13 255);
+  --info-border: oklch(0.8 0.08 250);
+
+  --neutral: oklch(0.45 0.022 207);
+  --neutral-foreground: oklch(0.995 0.004 200);
+  --neutral-subtle: oklch(0.95 0.008 200 / 0.85);
+  --neutral-subtle-foreground: oklch(0.38 0.02 210);
+  --neutral-border: oklch(0.82 0.012 205);
+
+  /* shadcn name for the danger family */
+  --destructive: var(--danger);
+
+  /* Sidebar */
+  --sidebar: var(--glass-fill-raised);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: oklch(0.94 0.045 192 / 0.8);
+  --sidebar-accent-foreground: oklch(0.3 0.07 197);
+  --sidebar-border: var(--glass-edge);
+  --sidebar-ring: var(--ring);
+
+  /* Glass. Fills keep text at 4.5:1 over the brightest and darkest part of the aurora. */
+  --glass-fill: oklch(1 0 0 / 0.62);
+  --glass-fill-raised: oklch(1 0 0 / 0.74);
+  --glass-fill-overlay: oklch(1 0 0 / 0.88);
+  --glass-solid: oklch(0.995 0.003 200);
+  --glass-solid-raised: oklch(0.99 0.004 200);
+  --glass-solid-overlay: oklch(1 0 0);
+  --glass-border: oklch(1 0 0 / 0.7);
+  --glass-edge: oklch(0.25 0.03 215 / 0.1);
+  --glass-highlight: oklch(1 0 0 / 0.85);
+  --glass-sheen: oklch(1 0 0 / 0.45);
+  --glass-blur: 14px;
+  --glass-blur-raised: 22px;
+  --glass-blur-overlay: 28px;
+  --glass-saturate: 1.5;
+  --glass-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  --glass-filter-raised: blur(var(--glass-blur-raised)) saturate(var(--glass-saturate));
+  --glass-filter-overlay: blur(var(--glass-blur-overlay)) saturate(var(--glass-saturate));
+
+  /* Gradients. Brand and emphasis only, never status. */
+  --gradient-brand: linear-gradient(135deg, oklch(0.46 0.1 188), oklch(0.54 0.11 220));
+  --gradient-brand-soft: linear-gradient(
+    135deg,
+    oklch(0.95 0.045 192 / 0.85),
+    oklch(0.95 0.04 222 / 0.7)
+  );
+  --gradient-text: linear-gradient(120deg, oklch(0.45 0.1 195), oklch(0.5 0.14 250));
+  --backdrop-aurora:
+    radial-gradient(64rem 44rem at 6% -8%, oklch(0.86 0.1 190 / 0.75), transparent 62%),
+    radial-gradient(54rem 40rem at 98% 4%, oklch(0.87 0.1 225 / 0.7), transparent 62%),
+    radial-gradient(50rem 38rem at 70% 106%, oklch(0.88 0.1 285 / 0.5), transparent 62%),
+    radial-gradient(40rem 30rem at -4% 72%, oklch(0.9 0.08 165 / 0.4), transparent 62%),
+    linear-gradient(180deg, oklch(0.975 0.012 200), oklch(0.945 0.03 225));
+
+  /* Depth */
+  --elevation-xs: 0 1px 2px oklch(0.2 0.03 215 / 0.06);
+  --elevation-sm: 0 1px 3px oklch(0.2 0.03 215 / 0.08), 0 1px 2px oklch(0.2 0.03 215 / 0.05);
+  --elevation-md:
+    0 4px 12px -2px oklch(0.2 0.03 215 / 0.1), 0 2px 6px -2px oklch(0.2 0.03 215 / 0.06);
+  --elevation-lg:
+    0 14px 34px -8px oklch(0.2 0.03 215 / 0.18), 0 4px 12px -4px oklch(0.2 0.03 215 / 0.08);
+  --elevation-glass: 0 8px 32px -10px oklch(0.3 0.06 200 / 0.2);
+  --elevation-glow: 0 0 0 1px oklch(0.7 0.12 192 / 0.3), 0 8px 24px -6px oklch(0.55 0.12 195 / 0.5);
+
+  /* ---------- 3. Component tokens ---------- */
+  /* Categorical slots (calendar bars by leave type). Equal lightness so no slot reads as a status. */
+  --cat-1: oklch(0.52 0.12 215);
+  --cat-2: oklch(0.52 0.14 255);
+  --cat-3: oklch(0.52 0.15 285);
+  --cat-4: oklch(0.52 0.15 325);
+  --cat-5: oklch(0.52 0.14 355);
+  --cat-6: oklch(0.52 0.12 50);
+  --cat-7: oklch(0.52 0.1 115);
+  --cat-8: oklch(0.52 0.09 175);
+  --cat-foreground: oklch(0.995 0.004 200);
+  --calendar-weekend: oklch(0.5 0.02 210 / 0.07);
+  --calendar-holiday: oklch(0.7 0.1 75 / 0.16);
+
+  /* Shape, layout */
+  --radius: 0.75rem;
+  --layout-header-height: 3.5rem;
+  --layout-content-max: 80rem;
+  --layout-gutter: clamp(1rem, 2.5vw, 2rem);
+}
+
+.dark {
+  --background: oklch(0.15 0.02 220);
+  --foreground: oklch(0.97 0.006 200);
+  --muted: oklch(0.3 0.02 215 / 0.55);
+  --muted-foreground: oklch(0.76 0.02 205);
+  --surface-sunken: oklch(0.12 0.02 220 / 0.55);
+
+  --primary: oklch(0.78 0.12 190);
+  --primary-foreground: oklch(0.2 0.04 200);
+  --secondary: oklch(0.32 0.02 215 / 0.6);
+  --secondary-foreground: oklch(0.95 0.01 200);
+  --accent: oklch(0.42 0.07 192 / 0.5);
+  --accent-foreground: oklch(0.95 0.03 192);
+  --ring: oklch(0.8 0.11 190);
+
+  --border: oklch(1 0 0 / 0.1);
+  --input: oklch(0.68 0.025 205);
+
+  --success: oklch(0.74 0.16 150);
+  --success-foreground: oklch(0.2 0.05 150);
+  --success-subtle: oklch(0.3 0.06 150 / 0.65);
+  --success-subtle-foreground: oklch(0.9 0.09 150);
+  --success-border: oklch(0.48 0.1 150);
+
+  --warning: oklch(0.8 0.15 80);
+  --warning-foreground: oklch(0.22 0.05 70);
+  --warning-subtle: oklch(0.34 0.07 75 / 0.65);
+  --warning-subtle-foreground: oklch(0.92 0.1 90);
+  --warning-border: oklch(0.52 0.1 75);
+
+  --danger: oklch(0.79 0.15 22);
+  --danger-foreground: oklch(0.2 0.05 22);
+  --danger-subtle: oklch(0.34 0.09 25 / 0.65);
+  --danger-subtle-foreground: oklch(0.9 0.07 22);
+  --danger-border: oklch(0.5 0.12 25);
+
+  --info: oklch(0.74 0.12 250);
+  --info-foreground: oklch(0.2 0.05 255);
+  --info-subtle: oklch(0.32 0.07 255 / 0.65);
+  --info-subtle-foreground: oklch(0.9 0.05 250);
+  --info-border: oklch(0.5 0.1 255);
+
+  --neutral: oklch(0.72 0.02 205);
+  --neutral-foreground: oklch(0.2 0.02 215);
+  --neutral-subtle: oklch(0.32 0.02 215 / 0.65);
+  --neutral-subtle-foreground: oklch(0.9 0.01 200);
+  --neutral-border: oklch(0.48 0.02 210);
+
+  --sidebar-accent: oklch(0.4 0.07 192 / 0.55);
+  --sidebar-accent-foreground: oklch(0.95 0.03 192);
+
+  --glass-fill: oklch(0.22 0.025 215 / 0.66);
+  --glass-fill-raised: oklch(0.2 0.025 215 / 0.74);
+  --glass-fill-overlay: oklch(0.2 0.025 215 / 0.84);
+  --glass-solid: oklch(0.22 0.022 216);
+  --glass-solid-raised: oklch(0.2 0.022 217);
+  --glass-solid-overlay: oklch(0.19 0.022 217);
+  --glass-border: oklch(1 0 0 / 0.1);
+  --glass-edge: oklch(1 0 0 / 0.09);
+  --glass-highlight: oklch(1 0 0 / 0.14);
+  --glass-sheen: oklch(1 0 0 / 0.06);
+  --glass-saturate: 1.6;
+
+  --gradient-brand: linear-gradient(135deg, oklch(0.8 0.12 190), oklch(0.76 0.12 214));
+  --gradient-brand-soft: linear-gradient(
+    135deg,
+    oklch(0.42 0.07 192 / 0.55),
+    oklch(0.4 0.07 225 / 0.4)
+  );
+  --gradient-text: linear-gradient(120deg, oklch(0.88 0.11 190), oklch(0.82 0.12 250));
+  --backdrop-aurora:
+    radial-gradient(64rem 44rem at 6% -8%, oklch(0.5 0.11 192 / 0.75), transparent 62%),
+    radial-gradient(54rem 40rem at 98% 4%, oklch(0.48 0.11 225 / 0.65), transparent 62%),
+    radial-gradient(50rem 38rem at 70% 106%, oklch(0.4 0.14 280 / 0.55), transparent 62%),
+    radial-gradient(40rem 30rem at -4% 72%, oklch(0.42 0.09 170 / 0.4), transparent 62%),
+    linear-gradient(180deg, oklch(0.16 0.02 218), oklch(0.13 0.02 222));
+
+  --elevation-xs: 0 1px 2px oklch(0 0 0 / 0.3);
+  --elevation-sm: 0 1px 3px oklch(0 0 0 / 0.35), 0 1px 2px oklch(0 0 0 / 0.25);
+  --elevation-md: 0 4px 12px -2px oklch(0 0 0 / 0.4), 0 2px 6px -2px oklch(0 0 0 / 0.3);
+  --elevation-lg: 0 14px 34px -8px oklch(0 0 0 / 0.55), 0 4px 12px -4px oklch(0 0 0 / 0.35);
+  --elevation-glass: 0 8px 32px -10px oklch(0 0 0 / 0.55);
+  --elevation-glow:
+    0 0 0 1px oklch(0.8 0.12 190 / 0.35), 0 8px 28px -6px oklch(0.7 0.13 192 / 0.45);
+
+  --cat-1: oklch(0.74 0.11 215);
+  --cat-2: oklch(0.74 0.12 255);
+  --cat-3: oklch(0.74 0.13 285);
+  --cat-4: oklch(0.74 0.13 325);
+  --cat-5: oklch(0.74 0.12 355);
+  --cat-6: oklch(0.76 0.12 50);
+  --cat-7: oklch(0.76 0.11 115);
+  --cat-8: oklch(0.76 0.09 175);
+  --cat-foreground: oklch(0.2 0.02 215);
+  --calendar-weekend: oklch(1 0 0 / 0.04);
+  --calendar-holiday: oklch(0.8 0.12 80 / 0.14);
+}

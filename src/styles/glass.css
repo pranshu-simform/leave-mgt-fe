@@ -1,0 +1,193 @@
+/*
+ * Glass. Surfaces are translucent fills (the --card, --popover and --sidebar tokens) plus a blur, a
+ * hairline edge, a top highlight and a soft shadow. shadcn components are not edited: the rules below
+ * attach glass to their data-slot attributes. They are unlayered on purpose, so they beat the utility
+ * classes the generated components carry (ring-1, shadow-md, bg-card).
+ *
+ * Rules: at most two overlapping blurred layers, no blur on repeated elements (table rows, list
+ * items), blur capped at 28px. Under the three fallbacks at the bottom, every fill becomes opaque.
+ */
+
+@utility glass {
+  background-color: var(--glass-fill);
+  backdrop-filter: var(--glass-filter);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 0 1px var(--glass-edge),
+    var(--elevation-glass);
+}
+
+@utility glass-raised {
+  background-color: var(--glass-fill-raised);
+  backdrop-filter: var(--glass-filter-raised);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 0 1px var(--glass-edge),
+    var(--elevation-glass);
+}
+
+@utility glass-overlay {
+  background-color: var(--glass-fill-overlay);
+  backdrop-filter: var(--glass-filter-overlay);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 0 1px var(--glass-edge),
+    var(--elevation-lg);
+}
+
+/* A card that responds to the pointer: a small, smooth lift. */
+@utility lift {
+  transition:
+    transform var(--duration-base) var(--ease-smooth),
+    box-shadow var(--duration-base) var(--ease-smooth);
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 var(--glass-highlight),
+      0 0 0 1px var(--glass-edge),
+      var(--elevation-lg);
+  }
+}
+
+/* A gradient hairline for emphasis (the hero card, a featured panel). Put it on a position: relative element. */
+@utility gradient-border {
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: var(--gradient-brand);
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+  }
+}
+
+/* ---------- shadcn components mapped to a glass level ---------- */
+
+[data-slot='card'],
+[data-slot='alert'] {
+  background-image: linear-gradient(180deg, var(--glass-sheen), transparent 60%);
+  backdrop-filter: var(--glass-filter);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 0 1px var(--glass-edge),
+    var(--elevation-glass);
+}
+
+[data-slot='sidebar-inner'] {
+  backdrop-filter: var(--glass-filter-raised);
+  box-shadow: inset -1px 0 0 var(--glass-edge);
+}
+
+[data-slot='dialog-content'],
+[data-slot='alert-dialog-content'],
+[data-slot='sheet-content'],
+[data-slot='popover-content'],
+[data-slot='dropdown-menu-content'],
+[data-slot='dropdown-menu-sub-content'],
+[data-slot='select-content'],
+[data-slot='sidebar'][data-mobile='true'],
+[data-sonner-toast] {
+  background-image: linear-gradient(180deg, var(--glass-sheen), transparent 50%);
+  backdrop-filter: var(--glass-filter-overlay);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    0 0 0 1px var(--glass-edge),
+    var(--elevation-lg);
+}
+
+/* The mobile navigation is an overlay, so it gets the overlay fill, not the sidebar's. */
+[data-slot='sidebar'][data-mobile='true'] {
+  background-color: var(--glass-fill-overlay);
+}
+
+/* Toasts use the app font, not sonner's default stack. */
+[data-sonner-toaster] {
+  font-family: inherit;
+}
+
+/* The scrim only dims and tints. It does not blur: that would be a third blurred layer. */
+[data-slot='dialog-overlay'],
+[data-slot='alert-dialog-overlay'],
+[data-slot='sheet-overlay'] {
+  background-color: oklch(0.15 0.03 215 / 0.42);
+  backdrop-filter: none;
+}
+
+/* The calendar sits on a glass surface, so it must not paint its own solid background. */
+[data-slot='calendar'] {
+  background-color: transparent;
+}
+
+/* Progress fills with the brand gradient. */
+[data-slot='progress-indicator'] {
+  background-image: var(--gradient-brand);
+}
+
+/* Skeletons shimmer instead of pulsing. */
+[data-slot='skeleton'] {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in oklch, var(--foreground) 9%, transparent) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s linear infinite;
+}
+
+/* ---------- fallbacks: opaque surfaces, same layout ---------- */
+
+:root:root[data-glass='off'] {
+  --glass-fill: var(--glass-solid);
+  --glass-fill-raised: var(--glass-solid-raised);
+  --glass-fill-overlay: var(--glass-solid-overlay);
+  --glass-filter: none;
+  --glass-filter-raised: none;
+  --glass-filter-overlay: none;
+  --glass-sheen: transparent;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root:root {
+    --glass-fill: var(--glass-solid);
+    --glass-fill-raised: var(--glass-solid-raised);
+    --glass-fill-overlay: var(--glass-solid-overlay);
+    --glass-filter: none;
+    --glass-filter-raised: none;
+    --glass-filter-overlay: none;
+    --glass-sheen: transparent;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root:root {
+    --glass-filter: none;
+    --glass-filter-raised: none;
+    --glass-filter-overlay: none;
+    --glass-fill: var(--glass-solid);
+    --glass-fill-raised: var(--glass-solid-raised);
+    --glass-fill-overlay: var(--glass-solid-overlay);
+    --glass-sheen: transparent;
+  }
+}
+
+/* Windows high contrast: drop the decoration and keep real borders. */
+@media (forced-colors: active) {
+  [data-slot='card'],
+  [data-slot='dialog-content'],
+  [data-slot='alert-dialog-content'],
+  [data-slot='sheet-content'],
+  [data-slot='popover-content'],
+  [data-slot='dropdown-menu-content'],
+  [data-slot='select-content'] {
+    border: 1px solid CanvasText;
+    background-image: none;
+  }
+}
