@@ -1,6 +1,12 @@
-import { CalendarDaysIcon, LayoutDashboardIcon, PaletteIcon, type LucideIcon } from 'lucide-react'
+import {
+  CalendarDaysIcon,
+  ClipboardCheckIcon,
+  LayoutDashboardIcon,
+  PaletteIcon,
+  type LucideIcon,
+} from 'lucide-react'
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
-import type { UserRole } from '@/constants/constant'
+import { USER_ROLES, type UserRole } from '@/constants/constant'
 
 export interface RouteNav {
   LABEL: string
@@ -45,6 +51,12 @@ export const PATH_ROUTES = {
     PATH: '/requests/:id',
     ALLOWED_ROLES: [],
     COMPONENT: lazy(() => import('@/features/leave-requests/pages/RequestDetailPage')),
+  },
+  APPROVALS: {
+    PATH: '/approvals',
+    ALLOWED_ROLES: [USER_ROLES.MANAGER, USER_ROLES.HR_ADMIN],
+    COMPONENT: lazy(() => import('@/features/approvals/pages/ApprovalsPage')),
+    NAV: { LABEL: 'Approvals', ICON: ClipboardCheckIcon },
   },
   REQUEST_EDIT: {
     PATH: '/requests/:id/edit',

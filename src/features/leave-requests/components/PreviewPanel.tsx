@@ -1,11 +1,8 @@
-import { UsersIcon } from 'lucide-react'
-import { ErrorState, StatusBadge } from '@/components/shared'
+import { ErrorState } from '@/components/shared'
 import { Card, CardContent, CardHeader, CardTitle, Progress } from '@/components/ui'
 import type { RequestPreview } from '@/features/leave-requests/types/leaveRequestTypes'
-import { formatDateRange } from '@/lib/dates'
+import { TeamOverlap } from '@/features/leave-requests/components/TeamOverlap'
 import { cn } from '@/lib/utils'
-
-const SHOWN_TEAMMATES = 5
 
 interface PreviewPanelProps {
   preview: RequestPreview | undefined
@@ -53,51 +50,6 @@ function Balance({ balance }: Readonly<{ balance: NonNullable<RequestPreview['ba
   )
 }
 
-function Overlaps({ overlaps }: Readonly<{ overlaps: NonNullable<RequestPreview['overlaps']> }>) {
-  const { overlapping, peakConcurrent, teamSize } = overlaps
-  // No manager means no team to compare with.
-  if (teamSize === 0) return null
-  const shown = overlapping.slice(0, SHOWN_TEAMMATES)
-  const hidden = overlapping.length - shown.length
-
-  return (
-    <div className="flex flex-col gap-2">
-      <p className="flex items-center gap-1.5 text-body-sm text-muted-foreground">
-        <UsersIcon aria-hidden="true" className="size-4" />
-        Your team
-      </p>
-      {overlapping.length === 0 ? (
-        <p>Nobody else on your team is off in this period.</p>
-      ) : (
-        <>
-          <p>
-            {overlapping.length} {overlapping.length === 1 ? 'teammate is' : 'teammates are'} off in
-            this period.
-          </p>
-          <ul className="flex flex-col gap-2">
-            {shown.map((item) => (
-              <li key={item.requestId} className="flex items-start justify-between gap-2">
-                <div className="flex min-w-0 flex-col">
-                  <span className="truncate font-medium">{item.name}</span>
-                  <span className="text-body-sm text-muted-foreground">
-                    {item.leaveType.name}, {formatDateRange(item.startDate, item.endDate)}
-                  </span>
-                </div>
-                <StatusBadge status={item.status} />
-              </li>
-            ))}
-          </ul>
-          {hidden > 0 && <p className="text-body-sm text-muted-foreground">and {hidden} more</p>}
-        </>
-      )}
-      <p className="text-body-sm text-muted-foreground">
-        At most {peakConcurrent} of {teamSize} {teamSize === 1 ? 'person' : 'people'} would be off
-        on the same day, you included.
-      </p>
-    </div>
-  )
-}
-
 export function PreviewPanel({
   preview,
   isChecking,
@@ -130,7 +82,7 @@ export function PreviewPanel({
           <div className={cn('flex flex-col gap-5 transition-opacity', isChecking && 'opacity-60')}>
             <Days days={preview.days} />
             {preview.balance && <Balance balance={preview.balance} />}
-            {preview.overlaps && <Overlaps overlaps={preview.overlaps} />}
+            {preview.overlaps && <TeamOverlap overlaps={preview.overlaps} />}
           </div>
         )}
       </CardContent>
