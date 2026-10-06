@@ -1,4 +1,4 @@
-import { LayoutDashboardIcon, PaletteIcon, type LucideIcon } from 'lucide-react'
+import { CalendarDaysIcon, LayoutDashboardIcon, PaletteIcon, type LucideIcon } from 'lucide-react'
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
 import type { UserRole } from '@/constants/constant'
 
@@ -29,9 +29,26 @@ export const PATH_ROUTES = {
     COMPONENT: lazy(() => import('@/features/dashboard/pages/DashboardPage')),
     NAV: { LABEL: 'Dashboard', ICON: LayoutDashboardIcon, END: true },
   },
+  REQUESTS: {
+    PATH: '/requests',
+    ALLOWED_ROLES: [],
+    COMPONENT: lazy(() => import('@/features/leave-requests/pages/MyRequestsPage')),
+    // Also the active entry on /requests/:id.
+    NAV: { LABEL: 'My requests', ICON: CalendarDaysIcon },
+  },
+  REQUEST_DETAIL: {
+    PATH: '/requests/:id',
+    ALLOWED_ROLES: [],
+    COMPONENT: lazy(() => import('@/features/leave-requests/pages/RequestDetailPage')),
+  },
 } satisfies Record<string, PathRoute>
 
 export const LOGIN_PATH = '/login'
+
+// Links to screens that have no entry above yet, and the path builders for dynamic routes.
+export const NEW_REQUEST_PATH = '/requests/new'
+export const requestDetailPath = (id: string): string =>
+  PATH_ROUTES.REQUEST_DETAIL.PATH.replace(':id', id)
 
 // Dev only: Vite removes this (and the page's chunk) from the production build. It needs no
 // sign-in, so the style guide works without the API.
