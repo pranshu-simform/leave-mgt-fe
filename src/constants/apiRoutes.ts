@@ -22,6 +22,18 @@ export const API_ROUTES = {
   HOLIDAYS: {
     LIST: `${API_V1}/holidays`,
   },
+  ADMIN: {
+    LEAVE_TYPES: {
+      LIST: `${API_V1}/admin/leave-types`,
+      CREATE: `${API_V1}/admin/leave-types`,
+      UPDATE: `${API_V1}/admin/leave-types/:id`,
+    },
+    HOLIDAYS: {
+      LIST: `${API_V1}/admin/holidays`,
+      CREATE: `${API_V1}/admin/holidays`,
+      DELETE: `${API_V1}/admin/holidays/:id`,
+    },
+  },
   APPROVALS: {
     LIST: `${API_V1}/approvals`,
     OVERLAPS: `${API_V1}/approvals/:id/overlaps`,

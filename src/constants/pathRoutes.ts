@@ -4,6 +4,7 @@ import {
   ClipboardCheckIcon,
   LayoutDashboardIcon,
   PaletteIcon,
+  ShieldCheckIcon,
   type LucideIcon,
 } from 'lucide-react'
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
@@ -64,6 +65,12 @@ export const PATH_ROUTES = {
     ALLOWED_ROLES: [USER_ROLES.MANAGER, USER_ROLES.HR_ADMIN],
     COMPONENT: lazy(() => import('@/features/approvals/pages/ApprovalsPage')),
     NAV: { LABEL: 'Approvals', ICON: ClipboardCheckIcon },
+  },
+  ADMIN: {
+    PATH: '/admin',
+    ALLOWED_ROLES: [USER_ROLES.HR_ADMIN],
+    COMPONENT: lazy(() => import('@/features/admin/pages/AdminPage')),
+    NAV: { LABEL: 'Admin', ICON: ShieldCheckIcon },
   },
   REQUEST_EDIT: {
     PATH: '/requests/:id/edit',

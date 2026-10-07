@@ -17,7 +17,15 @@ export const QUERY_KEYS = {
     TEAMS: ['calendar', 'teams'] as const,
   },
   HOLIDAYS: {
+    ALL: ['holidays'] as const,
     MONTH: (month: string) => ['holidays', month] as const,
+  },
+  ADMIN: {
+    LEAVE_TYPES: ['admin', 'leave-types'] as const,
+    HOLIDAYS: {
+      ALL: ['admin', 'holidays'] as const,
+      LIST: (params: object) => ['admin', 'holidays', params] as const,
+    },
   },
   APPROVALS: {
     ALL: ['approvals'] as const,
