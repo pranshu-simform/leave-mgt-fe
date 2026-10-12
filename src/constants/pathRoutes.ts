@@ -86,6 +86,9 @@ export const requestDetailPath = (id: string): string =>
   PATH_ROUTES.REQUEST_DETAIL.PATH.replace(':id', id)
 export const requestEditPath = (id: string): string =>
   PATH_ROUTES.REQUEST_EDIT.PATH.replace(':id', id)
+// The admin Requests tab, optionally narrowed to one person.
+export const adminRequestsPath = (userId?: string): string =>
+  `${PATH_ROUTES.ADMIN.PATH}?tab=requests${userId ? `&userId=${userId}` : ''}`
 
 // Dev only: Vite removes this (and the page's chunk) from the production build. It needs no
 // sign-in, so the style guide works without the API.

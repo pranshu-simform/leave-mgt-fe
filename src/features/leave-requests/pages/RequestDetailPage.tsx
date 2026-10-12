@@ -3,7 +3,8 @@ import { useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ConfirmDialog, EmptyState, ErrorState, PageHeader } from '@/components/shared'
 import { Button, Card, CardContent, CardHeader, CardTitle, Skeleton } from '@/components/ui'
-import { PATH_ROUTES, requestEditPath } from '@/constants/pathRoutes'
+import { adminRequestsPath, PATH_ROUTES, requestEditPath } from '@/constants/pathRoutes'
+import { USER_ROLES } from '@/constants/constant'
 import { AuditTimeline } from '@/features/leave-requests/components/AuditTimeline'
 import { RequestSummary } from '@/features/leave-requests/components/RequestSummary'
 import { useCancelRequest } from '@/features/leave-requests/hooks/useCancelRequest'
@@ -14,7 +15,11 @@ import { useAuth } from '@/hooks/useAuth'
 import { isApiError } from '@/lib/apiClient'
 import { formatDateRange, todayLocalIso } from '@/lib/dates'
 
-const BREADCRUMBS = [{ label: 'My requests', to: PATH_ROUTES.REQUESTS.PATH }]
+const MY_REQUESTS_CRUMB = { label: 'My requests', to: PATH_ROUTES.REQUESTS.PATH }
+const ADMIN_REQUESTS_CRUMBS = [
+  { label: 'Admin', to: PATH_ROUTES.ADMIN.PATH },
+  { label: 'Requests', to: adminRequestsPath() },
+]
 
 // With `resubmit`, a successful cancel opens a new request form with the same details, which is how
 // an approved request is changed: it cannot be edited, so it is cancelled and sent again.
@@ -108,6 +113,9 @@ export default function RequestDetailPage() {
   }
 
   const isOwner = request.requester.id === user?.id
+  // HR reaches someone else's request from the admin list, and goes back there.
+  const crumbs =
+    !isOwner && user?.role === USER_ROLES.HR_ADMIN ? ADMIN_REQUESTS_CRUMBS : [MY_REQUESTS_CRUMB]
   const isPending = request.status === 'PENDING'
   // An approved request can be cancelled until it starts. The server decides with its own date; the
   // local date only chooses what to offer, and the server's message is shown if they disagree.
@@ -119,7 +127,7 @@ export default function RequestDetailPage() {
       <PageHeader
         title={`${request.leaveType.name} request`}
         description={isOwner ? undefined : `Requested by ${request.requester.name}`}
-        breadcrumbs={[...BREADCRUMBS, { label: request.leaveType.name }]}
+        breadcrumbs={[...crumbs, { label: request.leaveType.name }]}
         actions={
           canCancel ? (
             <>

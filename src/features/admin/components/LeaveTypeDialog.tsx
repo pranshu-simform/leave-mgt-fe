@@ -18,6 +18,7 @@ import { useCreateLeaveType, useUpdateLeaveType } from '@/features/admin/hooks/u
 import { leaveTypeSchema, type LeaveTypeFormData } from '@/features/admin/schemas/leaveTypeSchema'
 import type { AdminLeaveType } from '@/features/admin/types/adminTypes'
 import { formatDays } from '@/features/admin/utils/formatDays'
+import { toNumber, toNumberOrNull } from '@/features/admin/utils/formNumbers'
 import { handleApiError, isApiError } from '@/lib/apiClient'
 import { showError } from '@/lib/toast'
 
@@ -51,14 +52,6 @@ const EMPTY_VALUES: Partial<LeaveTypeFormData> = {
   requiresNote: false,
   requiresApproval: true,
   isActive: true,
-}
-
-function toNumber(value: unknown): number | undefined {
-  return value === '' || value === null || value === undefined ? undefined : Number(value)
-}
-
-function toNumberOrNull(value: unknown): number | null | undefined {
-  return value === '' || value === null || value === undefined ? null : Number(value)
 }
 
 interface RuleSwitchProps {
