@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { TONE_CLASSES, type Column } from '@/components/shared'
+import { TONE_CLASSES, WithTooltip, type Column } from '@/components/shared'
 import { Badge, Button } from '@/components/ui'
 import { ROLE_LABELS } from '@/constants/constant'
 import { adminRequestsPath } from '@/constants/pathRoutes'
@@ -87,7 +87,12 @@ export function buildUserColumns(
   ]
 }
 
-// The Users tab: the same person, with a resend button for someone who has not set a password.
+function resendBlockedReason(user: AdminUser) {
+  return user.hasPassword ? 'Already set a password' : 'Inactive people cannot get a link'
+}
+
+// The Users tab: the same person, with a resend button on every row. It is enabled only for an
+// active person who has not set a password; the others show why it is off.
 // `resendingId` is the person whose link is being sent, so only that button is busy.
 export function buildUserManagementColumns(
   onResend: (user: AdminUser) => void,
@@ -103,18 +108,22 @@ export function buildUserManagementColumns(
       header: 'Actions',
       mobile: 'action',
       align: 'end',
-      cell: (user) =>
-        user.isActive && !user.hasPassword ? (
-          <Button
-            variant="outline"
-            size="sm"
-            aria-label={`Resend the set-password link to ${user.name}`}
-            disabled={resendingId !== null}
-            onClick={() => onResend(user)}
-          >
-            {resendingId === user.id ? 'Sending…' : 'Resend link'}
-          </Button>
-        ) : null,
+      cell: (user) => {
+        const canResend = user.isActive && !user.hasPassword
+        return (
+          <WithTooltip content={resendBlockedReason(user)} when={!canResend}>
+            <Button
+              variant="outline"
+              size="sm"
+              aria-label={`Resend the set-password link to ${user.name}`}
+              disabled={!canResend || resendingId !== null}
+              onClick={() => onResend(user)}
+            >
+              {resendingId === user.id ? 'Sending…' : 'Resend link'}
+            </Button>
+          </WithTooltip>
+        )
+      },
     },
   ]
 }
