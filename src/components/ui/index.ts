@@ -25,3 +25,5 @@ export * from './switch'
 export * from './tabs'
 export * from './textarea'
 export * from './tooltip'
+// `chart` is not re-exported here on purpose: it pulls in recharts, and through this barrel that would
+// land in the chunk every page loads. Import it from '@/components/ui/chart' (the dashboard only).

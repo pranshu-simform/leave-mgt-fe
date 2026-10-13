@@ -87,7 +87,7 @@ function PersonBalances({ user }: Readonly<{ user: AdminUser }>) {
           {ROLE_LABELS[user.role]}, {user.email}
         </DialogDescription>
       </DialogHeader>
-      <div className="w-40">
+      <div className="w-full sm:w-40">
         <FormGroup label="Year">
           {(controlProps) => (
             <AppSelect

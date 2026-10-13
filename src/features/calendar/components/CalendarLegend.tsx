@@ -1,19 +1,22 @@
 import { ClockIcon } from 'lucide-react'
-import { barClasses, swatchClass, typeSlot } from '@/features/calendar/utils/leaveBarStyles'
+import { barClasses } from '@/features/calendar/utils/leaveBarStyles'
+import { swatchClass, typeSlot } from '@/lib/leaveTypeColors'
 import { cn } from '@/lib/utils'
 
 interface CalendarLegendProps {
   // The leave types that appear this month, as { id, name }.
   types: readonly { id: string; name: string }[]
   typeIds: readonly string[]
+  // The today, weekend and holiday keys explain the grid's shading; the phone agenda has none.
+  showGridKeys: boolean
 }
 
-export function CalendarLegend({ types, typeIds }: Readonly<CalendarLegendProps>) {
+export function CalendarLegend({ types, typeIds, showGridKeys }: Readonly<CalendarLegendProps>) {
   const first = types[0]
   return (
     <ul
       aria-label="Legend"
-      className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-4 text-body-sm"
+      className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-border px-4 py-3 text-body-sm"
     >
       {types.map((type) => (
         <li key={type.id} className="flex items-center gap-2">
@@ -24,7 +27,7 @@ export function CalendarLegend({ types, typeIds }: Readonly<CalendarLegendProps>
           {type.name}
         </li>
       ))}
-      {first && (
+      {showGridKeys && first && (
         <li className="flex items-center gap-2">
           <span
             aria-hidden="true"
@@ -38,20 +41,28 @@ export function CalendarLegend({ types, typeIds }: Readonly<CalendarLegendProps>
           Pending approval
         </li>
       )}
-      <li className="flex items-center gap-2">
-        <span
-          aria-hidden="true"
-          className="size-3 rounded-sm border border-border bg-calendar-weekend"
-        />
-        Weekend
-      </li>
-      <li className="flex items-center gap-2">
-        <span
-          aria-hidden="true"
-          className="size-3 rounded-sm border border-border bg-calendar-holiday"
-        />
-        Public holiday
-      </li>
+      {showGridKeys && (
+        <>
+          <li className="flex items-center gap-2">
+            <span aria-hidden="true" className="size-3 rounded-full bg-primary" />
+            Today
+          </li>
+          <li className="flex items-center gap-2">
+            <span
+              aria-hidden="true"
+              className="size-3 rounded-sm border border-border bg-calendar-weekend"
+            />
+            Weekend
+          </li>
+          <li className="flex items-center gap-2">
+            <span
+              aria-hidden="true"
+              className="size-3 rounded-sm border border-border bg-calendar-holiday"
+            />
+            Public holiday
+          </li>
+        </>
+      )}
     </ul>
   )
 }

@@ -127,7 +127,16 @@ export function AppShell({
         <header className="sticky top-0 z-20 pt-2">
           <div className="mx-auto w-full max-w-content px-gutter">
             <div className="flex h-header items-center justify-between gap-2 rounded-xl px-2 glass-raised">
-              <SidebarTrigger size="icon" aria-label="Toggle navigation" />
+              <div className="flex min-w-0 items-center gap-2">
+                <SidebarTrigger size="icon" aria-label="Toggle navigation" />
+                {/* On a phone the sidebar is a drawer, so the bar carries the brand instead. */}
+                <span aria-hidden="true" className="flex min-w-0 items-center gap-2 md:hidden">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-brand text-primary-foreground">
+                    <CalendarCheck2Icon className="size-3.5" />
+                  </span>
+                  <span className="truncate text-label font-semibold">{brand}</span>
+                </span>
+              </div>
               <ThemeToggle />
             </div>
           </div>

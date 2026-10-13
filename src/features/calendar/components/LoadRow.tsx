@@ -1,23 +1,7 @@
 import type { SummaryDay } from '@/features/calendar/types/calendarTypes'
+import { loadLevel } from '@/features/calendar/utils/loadLevel'
 import { formatDate, isWeekend } from '@/lib/dates'
 import { cn } from '@/lib/utils'
-
-const LEVELS = [
-  'text-muted-foreground',
-  'bg-info-subtle text-info-subtle-foreground',
-  'bg-warning-subtle text-warning-subtle-foreground',
-  'bg-danger-subtle text-danger-subtle-foreground',
-] as const
-
-// How crowded a day is, from none to most of the team. The number is always printed, so the
-// intensity is a hint and not the only signal.
-function level(away: number, teamSize: number): (typeof LEVELS)[number] {
-  if (away === 0 || teamSize === 0) return LEVELS[0]
-  const share = away / teamSize
-  if (share < 1 / 3) return LEVELS[1]
-  if (share < 2 / 3) return LEVELS[2]
-  return LEVELS[3]
-}
 
 interface LoadRowProps {
   days: readonly string[]
@@ -34,7 +18,7 @@ export function LoadRow({ days, holidayDates, load }: Readonly<LoadRowProps>) {
     <tr>
       <th
         scope="row"
-        className="sticky left-0 z-10 bg-popover px-2 py-1 text-left text-label font-medium sm:px-3"
+        className="sticky left-0 z-10 bg-background px-3 py-1.5 text-left text-label font-medium after:absolute after:inset-y-0 after:right-0 after:w-px after:bg-border"
       >
         Away{teamSize ? ` of ${teamSize}` : ''}
       </th>
@@ -48,7 +32,7 @@ export function LoadRow({ days, holidayDates, load }: Readonly<LoadRowProps>) {
               title={`${formatDate(date)}: ${away}${day ? ` of ${day.teamSize}` : ''} away`}
               className={cn(
                 'block rounded-sm py-0.5 text-caption tabular-nums',
-                level(away, day?.teamSize ?? teamSize ?? 0),
+                loadLevel(away, day?.teamSize ?? teamSize ?? 0),
               )}
             >
               {away}

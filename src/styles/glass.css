@@ -92,6 +92,7 @@
 [data-slot='dropdown-menu-content'],
 [data-slot='dropdown-menu-sub-content'],
 [data-slot='select-content'],
+[data-slot='chart-tooltip'],
 [data-slot='sidebar'][data-mobile='true'],
 [data-sonner-toast] {
   background-image: linear-gradient(180deg, var(--glass-sheen), transparent 50%);

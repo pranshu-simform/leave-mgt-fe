@@ -1,14 +1,16 @@
 import { CalendarCheckIcon } from 'lucide-react'
 import { Link } from 'react-router'
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui'
+import { Button, Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui'
 import { EmptyState, ErrorState, TableSkeleton } from '@/components/shared'
 import { PATH_ROUTES, requestDetailPath } from '@/constants/pathRoutes'
 import { useMyRequests } from '@/features/leave-requests/hooks/useMyRequests'
 import { formatDateRange, todayLocalIso } from '@/lib/dates'
+import { swatchClass, typeSlot } from '@/lib/leaveTypeColors'
+import { cn } from '@/lib/utils'
 
 const UPCOMING_COUNT = 5
 
-export function UpcomingLeave() {
+export function UpcomingLeave({ typeIds }: Readonly<{ typeIds: readonly string[] }>) {
   // Approved requests that have not ended yet, soonest first (the server orders them). The local
   // date only decides what to show here; it is not a rule check.
   const { data, isLoading, isError, refetch } = useMyRequests({
@@ -19,9 +21,19 @@ export function UpcomingLeave() {
   })
 
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle className="text-h3">Upcoming leave</CardTitle>
+        <CardAction>
+          <Button
+            variant="ghost"
+            size="sm"
+            render={<Link to={`${PATH_ROUTES.REQUESTS.PATH}?status=APPROVED`} />}
+            nativeButton={false}
+          >
+            See all
+          </Button>
+        </CardAction>
       </CardHeader>
       <CardContent>
         {isLoading && <TableSkeleton rows={3} columns={2} />}
@@ -43,8 +55,15 @@ export function UpcomingLeave() {
         {data && data.items.length > 0 && (
           <ul className="flex flex-col divide-y divide-border">
             {data.items.map((request) => (
-              <li key={request.id} className="flex items-center justify-between gap-3 py-3">
-                <div className="flex min-w-0 flex-col">
+              <li key={request.id} className="flex items-center gap-3 py-3">
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    'h-9 w-1 shrink-0 rounded-full',
+                    swatchClass(typeSlot(request.leaveType.id, typeIds)),
+                  )}
+                />
+                <div className="flex min-w-0 flex-1 flex-col">
                   <Link
                     to={requestDetailPath(request.id)}
                     className="truncate font-medium hover:underline"

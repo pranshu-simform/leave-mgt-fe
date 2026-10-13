@@ -36,7 +36,7 @@ export function LeaveBar({ person, leave, slot }: Readonly<LeaveBarProps>) {
             aria-label={label}
             tabIndex={0}
             className={cn(
-              'flex h-6 items-center gap-1 overflow-hidden px-1.5 text-caption font-medium outline-none focus-visible:ring-3 focus-visible:ring-ring/60',
+              'flex h-7 items-center gap-1 overflow-hidden px-2 text-caption font-medium outline-none focus-visible:ring-3 focus-visible:ring-ring/60',
               barClasses(slot, pending),
               leave.startsBefore ? 'rounded-l-none' : 'rounded-l-md',
               leave.endsAfter ? 'rounded-r-none' : 'rounded-r-md',

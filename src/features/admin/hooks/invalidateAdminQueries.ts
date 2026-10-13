@@ -16,10 +16,12 @@ export function invalidateLeaveTypeQueries(queryClient: QueryClient): Promise<un
     QUERY_KEYS.CALENDAR.ALL,
     QUERY_KEYS.LEAVE_REQUESTS.ALL,
     QUERY_KEYS.APPROVALS.ALL,
+    QUERY_KEYS.DASHBOARD.ALL,
   ])
 }
 
-// A holiday changes the working days of previews and new requests, and the calendar marks it.
+// A holiday changes the working days of previews and new requests and of the dashboard charts, and
+// the calendar marks it.
 export function invalidateHolidayQueries(queryClient: QueryClient): Promise<unknown> {
   return invalidateAll(queryClient, [
     QUERY_KEYS.ADMIN.HOLIDAYS.ALL,
@@ -27,6 +29,7 @@ export function invalidateHolidayQueries(queryClient: QueryClient): Promise<unkn
     QUERY_KEYS.CALENDAR.ALL,
     QUERY_KEYS.LEAVE_REQUESTS.ALL,
     QUERY_KEYS.BALANCES.ALL,
+    QUERY_KEYS.DASHBOARD.ALL,
   ])
 }
 

@@ -10,6 +10,10 @@ export const QUERY_KEYS = {
     ME: (year?: number) => ['balances', 'me', ...(year ? [year] : [])] as const,
     USER: (userId: string, year: number) => ['balances', 'user', userId, year] as const,
   },
+  DASHBOARD: {
+    ALL: ['dashboard'] as const,
+    STATS: (year?: number) => ['dashboard', 'stats', ...(year ? [year] : [])] as const,
+  },
   CALENDAR: {
     ALL: ['calendar'] as const,
     MONTH: (params: object) => ['calendar', 'month', params] as const,

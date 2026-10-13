@@ -63,7 +63,7 @@ export default function ApprovalsPage() {
     <>
       <PageHeader title="Approvals" description="Leave requests from your team, oldest first" />
       <Tabs value={status} onValueChange={(value) => setFilter('status', String(value))}>
-        <TabsList>
+        <TabsList className="max-w-full justify-start overflow-x-auto overflow-y-hidden">
           {LEAVE_STATUSES.map((value) => (
             <TabsTrigger key={value} value={value}>
               {LEAVE_STATUS_CONFIG[value].label}

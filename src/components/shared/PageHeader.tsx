@@ -48,7 +48,12 @@ export function PageHeader({
         <h1 className="text-h1 text-balance">{title}</h1>
         {description && <p className="max-w-prose text-muted-foreground">{description}</p>}
       </div>
-      {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
+      {/* On a phone the actions fill the row, so they are easy to reach with a thumb. */}
+      {actions && (
+        <div className="flex w-full shrink-0 flex-wrap items-center gap-2 *:flex-1 sm:w-auto sm:*:flex-none">
+          {actions}
+        </div>
+      )}
     </header>
   )
 }

@@ -14,6 +14,9 @@ export const API_ROUTES = {
     ME: `${API_V1}/balances/me`,
     USER: `${API_V1}/users/:id/balances`,
   },
+  DASHBOARD: {
+    STATS: `${API_V1}/dashboard`,
+  },
   CALENDAR: {
     MONTH: `${API_V1}/calendar`,
     SUMMARY: `${API_V1}/calendar/summary`,

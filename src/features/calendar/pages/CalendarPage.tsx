@@ -1,7 +1,9 @@
 import { CalendarCheckIcon, UsersRoundIcon } from 'lucide-react'
 import { useMemo } from 'react'
 import { EmptyState, ErrorState, PageHeader, TableSkeleton } from '@/components/shared'
+import { Card } from '@/components/ui'
 import { USER_ROLES } from '@/constants/constant'
+import { AgendaList } from '@/features/calendar/components/AgendaList'
 import { CalendarLegend } from '@/features/calendar/components/CalendarLegend'
 import { CalendarToolbar } from '@/features/calendar/components/CalendarToolbar'
 import { MonthGrid } from '@/features/calendar/components/MonthGrid'
@@ -11,12 +13,15 @@ import { useCalendarSummary } from '@/features/calendar/hooks/useCalendarSummary
 import { useCalendarTeams } from '@/features/calendar/hooks/useCalendarTeams'
 import { useHolidays } from '@/features/calendar/hooks/useHolidays'
 import { useLeaveTypes } from '@/features/leave-types/hooks/useLeaveTypes'
+import { useIsMobile } from '@/hooks/use-mobile'
 import { useAuth } from '@/hooks/useAuth'
 import { isApiError } from '@/lib/apiClient'
 import { formatMonth } from '@/lib/dates'
 
 export default function CalendarPage() {
   const { user } = useAuth()
+  // Under 768 px the month is a list of days instead of a grid (see AgendaList).
+  const isMobile = useIsMobile()
   const { month, team, includePending, setMonth, setTeam, setIncludePending } = useCalendarParams()
 
   // HR looks at one team at a time. Everyone else gets their own, which the API works out, so no
@@ -52,6 +57,7 @@ export default function CalendarPage() {
   }, [calendar.items])
 
   let body
+  let legend = false
   if (needsTeam) {
     body = (
       <EmptyState
@@ -89,22 +95,36 @@ export default function CalendarPage() {
       />
     )
   } else {
+    legend = true
+    const load = sendsLoad ? summary.data : undefined
     body = (
       <>
-        <MonthGrid
-          month={month}
-          items={calendar.items}
-          holidays={holidays.data ?? []}
-          typeIds={typeIds}
-          load={sendsLoad ? summary.data : undefined}
-          isBusy={calendar.isLoadingMore}
-        />
+        {isMobile ? (
+          <AgendaList
+            month={month}
+            items={calendar.items}
+            holidays={holidays.data ?? []}
+            typeIds={typeIds}
+            load={load}
+          />
+        ) : (
+          <MonthGrid
+            month={month}
+            items={calendar.items}
+            holidays={holidays.data ?? []}
+            typeIds={typeIds}
+            load={load}
+            isBusy={calendar.isLoadingMore}
+          />
+        )}
         {calendar.isTruncated && (
-          <p role="status" className="pt-3 text-body-sm text-muted-foreground">
+          <p
+            role="status"
+            className="border-t border-border px-4 py-3 text-body-sm text-muted-foreground"
+          >
             This month has more leave than the calendar shows. Only the earliest is listed.
           </p>
         )}
-        <CalendarLegend types={typesAway} typeIds={typeIds} />
       </>
     )
   }
@@ -121,16 +141,20 @@ export default function CalendarPage() {
             : 'Who on your team is away'
         }
       />
-      <CalendarToolbar
-        month={month}
-        onMonthChange={setMonth}
-        includePending={includePending}
-        onIncludePendingChange={setIncludePending}
-        teamOptions={teamOptions}
-        team={team}
-        onTeamChange={isHr ? setTeam : undefined}
-      />
-      {body}
+      <Card className="gap-0 overflow-hidden py-0">
+        <CalendarToolbar
+          month={month}
+          onMonthChange={setMonth}
+          includePending={includePending}
+          onIncludePendingChange={setIncludePending}
+          teamOptions={teamOptions}
+          team={team}
+          onTeamChange={isHr ? setTeam : undefined}
+        />
+        {/* The empty, error and loading states sit inside the card, under the toolbar. */}
+        {legend ? body : <div className="p-4">{body}</div>}
+        {legend && <CalendarLegend types={typesAway} typeIds={typeIds} showGridKeys={!isMobile} />}
+      </Card>
     </>
   )
 }

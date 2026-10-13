@@ -71,7 +71,7 @@ function ReconcileContent() {
   return (
     <>
       <div className="flex flex-wrap items-end gap-3">
-        <div className="w-40">
+        <div className="w-full sm:w-40">
           <FormGroup label="Year">
             {(controlProps) => (
               <AppSelect

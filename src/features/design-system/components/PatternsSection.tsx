@@ -1,4 +1,4 @@
-import { CalendarXIcon, PlusIcon } from 'lucide-react'
+import { CalendarXIcon, HourglassIcon, InboxIcon, PlusIcon, WalletIcon } from 'lucide-react'
 import { useState } from 'react'
 import {
   AppSelect,
@@ -10,6 +10,7 @@ import {
   FormGroup,
   PageHeader,
   PageLoader,
+  StatCard,
   StatusBadge,
   TableSkeleton,
 } from '@/components/shared'
@@ -77,6 +78,27 @@ export function PatternsSection() {
               </Button>
             }
           />
+        </div>
+      </Subsection>
+
+      <Subsection title="StatCard: plain, with a tone, as a link, loading">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <StatCard icon={WalletIcon} label="Days left" value={18} hint="of 24 days this year" />
+          <StatCard
+            icon={HourglassIcon}
+            label="Pending"
+            value={3}
+            hint="awaiting a decision"
+            tone="warning"
+          />
+          <StatCard
+            icon={InboxIcon}
+            label="Waiting for you"
+            value={2}
+            hint="requests to decide"
+            to="/design-system"
+          />
+          <StatCard icon={WalletIcon} label="Days used" value={0} isLoading />
         </div>
       </Subsection>
 

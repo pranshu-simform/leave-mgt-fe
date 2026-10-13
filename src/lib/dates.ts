@@ -51,6 +51,11 @@ export function formatWeekdayDate(iso: string): string {
   return format(parseIsoDate(iso), 'EEE d MMM yyyy')
 }
 
+// "Wed 21": a short day label for a chart axis.
+export function formatShortDay(iso: string): string {
+  return format(parseIsoDate(iso), 'EEE d')
+}
+
 // "1 Mar 2026", "1 to 5 Mar 2026", "28 Feb to 3 Mar 2026" or "30 Dec 2026 to 2 Jan 2027".
 export function formatDateRange(startIso: string, endIso: string): string {
   const start = parseIsoDate(startIso)
@@ -88,6 +93,11 @@ export function addMonths(month: string, count: number): string {
 
 export function formatMonth(month: string): string {
   return format(parseIsoDate(`${month}-01`), 'MMMM yyyy')
+}
+
+// "Oct": a short month label for a chart axis.
+export function formatMonthShort(month: string): string {
+  return format(parseIsoDate(`${month}-01`), 'MMM')
 }
 
 // Every day of the month as YYYY-MM-DD.

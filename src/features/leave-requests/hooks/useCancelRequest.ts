@@ -20,6 +20,7 @@ export function useCancelRequest(id: string) {
       Promise.all([
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.LEAVE_REQUESTS.ALL }),
         queryClient.invalidateQueries({ queryKey: QUERY_KEYS.BALANCES.ALL }),
+        queryClient.invalidateQueries({ queryKey: QUERY_KEYS.DASHBOARD.ALL }),
       ]),
   })
 }

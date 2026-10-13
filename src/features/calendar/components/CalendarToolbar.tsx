@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
-import { AppSelect, FormGroup, type SelectOption } from '@/components/shared'
+import { AppSelect, type SelectOption } from '@/components/shared'
 import { Button, Checkbox, Label } from '@/components/ui'
 import { addMonths, currentMonthLocal, formatMonth } from '@/lib/dates'
 
@@ -14,6 +14,8 @@ interface CalendarToolbarProps {
   onTeamChange?: (managerId: string) => void
 }
 
+// The top band of the calendar card: the month on the left, the filters on the right. It wraps on a
+// narrow screen, the filters taking a row of their own.
 export function CalendarToolbar({
   month,
   onMonthChange,
@@ -25,7 +27,7 @@ export function CalendarToolbar({
 }: Readonly<CalendarToolbarProps>) {
   const isCurrent = month === currentMonthLocal()
   return (
-    <div className="flex flex-wrap items-end gap-x-6 gap-y-3 pb-4">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-border px-4 py-3">
       <div className="flex items-center gap-1">
         <Button
           variant="outline"
@@ -35,7 +37,7 @@ export function CalendarToolbar({
         >
           <ChevronLeftIcon aria-hidden="true" />
         </Button>
-        <h2 aria-live="polite" className="min-w-40 px-2 text-center text-h3">
+        <h2 aria-live="polite" className="min-w-36 px-2 text-center text-h3 sm:min-w-40">
           {formatMonth(month)}
         </h2>
         <Button
@@ -46,34 +48,31 @@ export function CalendarToolbar({
         >
           <ChevronRightIcon aria-hidden="true" />
         </Button>
-        {!isCurrent && (
-          <Button variant="ghost" onClick={() => onMonthChange(currentMonthLocal())}>
-            This month
-          </Button>
-        )}
       </div>
-      {teamOptions && onTeamChange && (
-        <div className="w-full sm:w-60">
-          <FormGroup label="Team">
-            {(controlProps) => (
-              <AppSelect
-                {...controlProps}
-                options={teamOptions}
-                value={team ?? ''}
-                onValueChange={onTeamChange}
-                placeholder="Choose a team"
-              />
-            )}
-          </FormGroup>
-        </div>
+      {!isCurrent && (
+        <Button variant="ghost" size="sm" onClick={() => onMonthChange(currentMonthLocal())}>
+          Today
+        </Button>
       )}
-      <Label className="flex items-center gap-2 pb-1.5">
-        <Checkbox
-          checked={includePending}
-          onCheckedChange={(checked) => onIncludePendingChange(checked === true)}
-        />
-        Show pending
-      </Label>
+      <div className="flex w-full flex-wrap items-center gap-x-4 gap-y-3 sm:ml-auto sm:w-auto">
+        {teamOptions && onTeamChange && (
+          <AppSelect
+            aria-label="Team"
+            className="w-full sm:w-60"
+            options={teamOptions}
+            value={team ?? ''}
+            onValueChange={onTeamChange}
+            placeholder="Choose a team"
+          />
+        )}
+        <Label className="flex items-center gap-2">
+          <Checkbox
+            checked={includePending}
+            onCheckedChange={(checked) => onIncludePendingChange(checked === true)}
+          />
+          Show pending
+        </Label>
+      </div>
     </div>
   )
 }

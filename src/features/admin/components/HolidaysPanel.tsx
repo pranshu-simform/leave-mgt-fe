@@ -69,7 +69,7 @@ export function HolidaysPanel() {
         </AlertDescription>
       </Alert>
       <div className="flex flex-wrap items-end justify-between gap-3 pb-4">
-        <div className="w-40">
+        <div className="w-full sm:w-40">
           <FormGroup label="Year">
             {(controlProps) => (
               <AppSelect
