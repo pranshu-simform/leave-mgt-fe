@@ -5,13 +5,19 @@ import type { AbsenceItem } from '@/features/leave-requests/types/leaveRequestTy
 import { Section } from './Section'
 
 const MONTH = '2026-10'
-const TYPE_CODES = ['ANNUAL', 'PARENTAL', 'SICK', 'UNPAID']
+// Ids sort in this order, which fixes each type's color.
+const TYPE_IDS = ['type-1', 'type-2', 'type-3', 'type-4']
+const TYPE_ID_BY_NAME: Record<string, string> = {
+  'Annual leave': 'type-1',
+  'Parental leave': 'type-2',
+  'Sick leave': 'type-3',
+  'Unpaid leave': 'type-4',
+}
 
 const absence = (
   requestId: string,
   userId: string,
   name: string,
-  code: string,
   typeName: string,
   startDate: string,
   endDate: string,
@@ -20,35 +26,17 @@ const absence = (
   requestId,
   userId,
   name,
-  leaveType: { code, name: typeName },
+  leaveType: { id: TYPE_ID_BY_NAME[typeName] ?? 'type-1', name: typeName },
   startDate,
   endDate,
   status,
 })
 
 const ITEMS: AbsenceItem[] = [
-  absence(
-    '1',
-    'a',
-    'Alice Archer',
-    'ANNUAL',
-    'Annual leave',
-    '2026-10-19',
-    '2026-10-21',
-    'APPROVED',
-  ),
-  absence('2', 'b', 'Bob Baker', 'ANNUAL', 'Annual leave', '2026-10-20', '2026-10-23', 'PENDING'),
-  absence('3', 'c', 'Cara Chen', 'SICK', 'Sick leave', '2026-10-21', '2026-10-21', 'APPROVED'),
-  absence(
-    '4',
-    'd',
-    'Dan Diaz',
-    'PARENTAL',
-    'Parental leave',
-    '2026-09-28',
-    '2026-10-02',
-    'APPROVED',
-  ),
+  absence('1', 'a', 'Alice Archer', 'Annual leave', '2026-10-19', '2026-10-21', 'APPROVED'),
+  absence('2', 'b', 'Bob Baker', 'Annual leave', '2026-10-20', '2026-10-23', 'PENDING'),
+  absence('3', 'c', 'Cara Chen', 'Sick leave', '2026-10-21', '2026-10-21', 'APPROVED'),
+  absence('4', 'd', 'Dan Diaz', 'Parental leave', '2026-09-28', '2026-10-02', 'APPROVED'),
 ]
 const HOLIDAYS: Holiday[] = [{ date: '2026-10-14', name: 'Company Foundation Day' }]
 const LOAD: SummaryDay[] = [
@@ -75,20 +63,14 @@ export function CalendarGridSection() {
       title="Team calendar grid"
       description="A real table: one row per person who is away, one column per day, leave as bars colored by type (cat-1 to cat-8), pending hatched with a clock, weekends and holidays shaded, and a load strip of people away per weekday. Bars are focusable and carry the full sentence."
     >
-      <MonthGrid
-        month={MONTH}
-        items={ITEMS}
-        holidays={HOLIDAYS}
-        typeCodes={TYPE_CODES}
-        load={LOAD}
-      />
+      <MonthGrid month={MONTH} items={ITEMS} holidays={HOLIDAYS} typeIds={TYPE_IDS} load={LOAD} />
       <CalendarLegend
         types={[
-          { code: 'ANNUAL', name: 'Annual leave' },
-          { code: 'PARENTAL', name: 'Parental leave' },
-          { code: 'SICK', name: 'Sick leave' },
+          { id: 'type-1', name: 'Annual leave' },
+          { id: 'type-2', name: 'Parental leave' },
+          { id: 'type-3', name: 'Sick leave' },
         ]}
-        typeCodes={TYPE_CODES}
+        typeIds={TYPE_IDS}
       />
     </Section>
   )

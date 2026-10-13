@@ -2,7 +2,6 @@ import { z } from 'zod'
 
 // These limits and messages mirror the server (`modules/admin`), so a form error and a server error
 // read the same.
-export const LEAVE_TYPE_CODE_PATTERN = /^[A-Z][A-Z0-9_]{1,29}$/
 export const LEAVE_TYPE_NAME_MAX_LENGTH = 60
 export const LEAVE_DAYS_MAX = 365
 
@@ -15,13 +14,6 @@ const days = (label: string) =>
 
 export const leaveTypeSchema = z
   .object({
-    code: z
-      .string()
-      .trim()
-      .regex(
-        LEAVE_TYPE_CODE_PATTERN,
-        'Use 2 to 30 capital letters, digits or underscores, starting with a letter',
-      ),
     name: z
       .string()
       .trim()

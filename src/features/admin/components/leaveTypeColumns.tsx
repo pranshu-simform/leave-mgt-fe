@@ -12,12 +12,8 @@ export function buildLeaveTypeColumns(
       id: 'name',
       header: 'Leave type',
       mobile: 'title',
-      cell: (type) => (
-        <>
-          <span className="font-medium">{type.name}</span>
-          <span className="block text-caption text-muted-foreground">{type.code}</span>
-        </>
-      ),
+      className: 'font-medium',
+      cell: (type) => type.name,
     },
     {
       id: 'balance',

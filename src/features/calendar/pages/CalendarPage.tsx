@@ -44,10 +44,10 @@ export default function CalendarPage() {
   )
   const teamName = teams.data?.find((item) => item.managerId === managerId)?.managerName
 
-  const typeCodes = useMemo(() => types.data?.map((type) => type.code) ?? [], [types.data])
+  const typeIds = useMemo(() => types.data?.map((type) => type.id) ?? [], [types.data])
   const typesAway = useMemo(() => {
-    const seen = new Map<string, { code: string; name: string }>()
-    for (const item of calendar.items) seen.set(item.leaveType.code, item.leaveType)
+    const seen = new Map<string, { id: string; name: string }>()
+    for (const item of calendar.items) seen.set(item.leaveType.id, item.leaveType)
     return [...seen.values()].sort((a, b) => a.name.localeCompare(b.name))
   }, [calendar.items])
 
@@ -95,7 +95,7 @@ export default function CalendarPage() {
           month={month}
           items={calendar.items}
           holidays={holidays.data ?? []}
-          typeCodes={typeCodes}
+          typeIds={typeIds}
           load={sendsLoad ? summary.data : undefined}
           isBusy={calendar.isLoadingMore}
         />
@@ -104,7 +104,7 @@ export default function CalendarPage() {
             This month has more leave than the calendar shows. Only the earliest is listed.
           </p>
         )}
-        <CalendarLegend types={typesAway} typeCodes={typeCodes} />
+        <CalendarLegend types={typesAway} typeIds={typeIds} />
       </>
     )
   }

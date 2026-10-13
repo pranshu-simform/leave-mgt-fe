@@ -29,13 +29,7 @@ interface LeaveTypeDialogProps {
   leaveType: AdminLeaveType | null
 }
 
-const FORM_FIELDS = [
-  'code',
-  'name',
-  'defaultAllowanceDays',
-  'minNoticeDays',
-  'maxConsecutiveDays',
-] as const
+const FORM_FIELDS = ['name', 'defaultAllowanceDays', 'minNoticeDays', 'maxConsecutiveDays'] as const
 type FormField = (typeof FORM_FIELDS)[number]
 
 function isFormField(field: string): field is FormField {
@@ -43,7 +37,6 @@ function isFormField(field: string): field is FormField {
 }
 
 const EMPTY_VALUES: Partial<LeaveTypeFormData> = {
-  code: '',
   name: '',
   drawsFromBalance: true,
   minNoticeDays: 0,
@@ -132,7 +125,7 @@ export function LeaveTypeDialog({ open, onOpenChange, leaveType }: Readonly<Leav
       return
     }
     if (error.code === 'ALREADY_EXISTS') {
-      form.setError('code', { message: error.message })
+      form.setError('name', { message: error.message })
       return
     }
     const mapped = (error.details ?? []).filter((detail) => isFormField(detail.field))
@@ -179,7 +172,6 @@ export function LeaveTypeDialog({ open, onOpenChange, leaveType }: Readonly<Leav
     } else {
       create.mutate(
         {
-          code: values.code,
           name: values.name,
           drawsFromBalance: values.drawsFromBalance,
           defaultAllowanceDays: values.defaultAllowanceDays,
@@ -235,36 +227,14 @@ export function LeaveTypeDialog({ open, onOpenChange, leaveType }: Readonly<Leav
             {editing ? (
               <dl className="grid gap-1 rounded-lg bg-muted/50 p-3 text-sm">
                 <div className="flex justify-between gap-4">
-                  <dt className="text-muted-foreground">Code</dt>
-                  <dd className="font-medium">{leaveType.code}</dd>
-                </div>
-                <div className="flex justify-between gap-4">
                   <dt className="text-muted-foreground">Draws from a balance</dt>
                   <dd className="font-medium">{leaveType.drawsFromBalance ? 'Yes' : 'No'}</dd>
                 </div>
                 <p className="pt-1 text-caption text-muted-foreground">
-                  Fixed after creation, because existing balances and refunds depend on them.
+                  Fixed after creation, because existing balances and refunds depend on it.
                 </p>
               </dl>
-            ) : (
-              <>
-                <FormGroup
-                  label="Code"
-                  required
-                  description="Capital letters, digits or underscores. It cannot be changed later."
-                  error={errors.code?.message}
-                >
-                  {(controlProps) => (
-                    <Input
-                      {...controlProps}
-                      {...form.register('code')}
-                      autoComplete="off"
-                      placeholder="STUDY"
-                    />
-                  )}
-                </FormGroup>
-              </>
-            )}
+            ) : null}
 
             <FormGroup label="Name" required error={errors.name?.message}>
               {(controlProps) => (
