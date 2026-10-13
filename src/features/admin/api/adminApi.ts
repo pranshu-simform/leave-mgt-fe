@@ -12,6 +12,7 @@ import type {
   AllocationResult,
   CreateHolidayPayload,
   CreateLeaveTypePayload,
+  CreateUserPayload,
   ReconcileReport,
   UpdateLeaveTypePayload,
 } from '@/features/admin/types/adminTypes'
@@ -75,6 +76,18 @@ export const adminApi = {
       { params },
     )
     return { items: response.data, pagination: response.pagination }
+  },
+
+  createUser: async (payload: CreateUserPayload) => {
+    const response = await apiClient.post<ApiResponse<AdminUser>>(
+      API_ROUTES.ADMIN.USERS.CREATE,
+      payload,
+    )
+    return response.data
+  },
+
+  resendInvite: async (id: string) => {
+    await apiClient.post<ApiResponse<null>>(API_ROUTES.ADMIN.USERS.RESEND_INVITE.replace(':id', id))
   },
 
   listRequests: async (params: AdminRequestParams): Promise<PaginatedResult<LeaveRequest>> => {

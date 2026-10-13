@@ -1,22 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CalendarCheck2Icon, EyeIcon, EyeOffIcon, TriangleAlertIcon } from 'lucide-react'
+import { TriangleAlertIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Navigate, useLocation, useNavigate } from 'react-router'
-import { FormGroup, PageLoader, ThemeToggle } from '@/components/shared'
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-} from '@/components/ui'
-import { TONE_CLASSES } from '@/components/shared'
+import { FormGroup, PageLoader, TONE_CLASSES } from '@/components/shared'
+import { Alert, AlertDescription, AlertTitle, Button, Input } from '@/components/ui'
+import { AuthShell } from '@/features/auth/components/AuthShell'
+import { PasswordInput } from '@/features/auth/components/PasswordInput'
 import { useLogin } from '@/features/auth/hooks/useLogin'
 import { loginSchema, type LoginFormData } from '@/features/auth/schemas/authSchema'
 import { useAuth } from '@/hooks/useAuth'
@@ -49,7 +39,6 @@ export default function LoginPage() {
   const { user, isLoading } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
-  const [showPassword, setShowPassword] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const login = useLogin()
 
@@ -82,81 +71,42 @@ export default function LoginPage() {
   })
 
   return (
-    <main className="relative flex min-h-svh items-center justify-center px-gutter py-10">
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
-      </div>
-      <div className="flex w-full max-w-sm animate-fade-rise flex-col gap-6">
-        <div className="flex flex-col items-center gap-3 text-center">
-          <span className="flex size-12 items-center justify-center rounded-2xl bg-brand text-primary-foreground shadow-glow">
-            <CalendarCheck2Icon aria-hidden="true" className="size-6" />
-          </span>
-          <h1 className="text-h1 text-gradient">Leave &amp; Attendance</h1>
-        </div>
+    <AuthShell title="Sign in" description="Use your work email and password.">
+      <form noValidate onSubmit={onSubmit} className="flex flex-col gap-4">
+        {formError && (
+          <Alert role="alert" className={cn(TONE_CLASSES.danger)}>
+            <TriangleAlertIcon aria-hidden="true" />
+            <AlertTitle>Could not sign in</AlertTitle>
+            <AlertDescription className="text-current">{formError}</AlertDescription>
+          </Alert>
+        )}
 
-        <Card className="gradient-border">
-          <CardHeader>
-            <CardTitle className="text-h3">Sign in</CardTitle>
-            <CardDescription>Use your work email and password.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form noValidate onSubmit={onSubmit} className="flex flex-col gap-4">
-              {formError && (
-                <Alert role="alert" className={cn(TONE_CLASSES.danger)}>
-                  <TriangleAlertIcon aria-hidden="true" />
-                  <AlertTitle>Could not sign in</AlertTitle>
-                  <AlertDescription className="text-current">{formError}</AlertDescription>
-                </Alert>
-              )}
+        <FormGroup label="Email" error={errors.email?.message}>
+          {(controlProps) => (
+            <Input
+              {...controlProps}
+              type="email"
+              autoComplete="username"
+              autoFocus
+              {...form.register('email')}
+            />
+          )}
+        </FormGroup>
 
-              <FormGroup label="Email" error={errors.email?.message}>
-                {(controlProps) => (
-                  <Input
-                    {...controlProps}
-                    type="email"
-                    autoComplete="username"
-                    autoFocus
-                    {...form.register('email')}
-                  />
-                )}
-              </FormGroup>
+        <FormGroup label="Password" error={errors.password?.message}>
+          {(controlProps) => (
+            <PasswordInput
+              {...controlProps}
+              autoComplete="current-password"
+              {...form.register('password')}
+            />
+          )}
+        </FormGroup>
 
-              <FormGroup label="Password" error={errors.password?.message}>
-                {(controlProps) => (
-                  <div className="relative">
-                    <Input
-                      {...controlProps}
-                      type={showPassword ? 'text' : 'password'}
-                      autoComplete="current-password"
-                      className="pr-10"
-                      {...form.register('password')}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      className="absolute top-1/2 right-1 -translate-y-1/2"
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      aria-pressed={showPassword}
-                      onClick={() => setShowPassword((value) => !value)}
-                    >
-                      {showPassword ? (
-                        <EyeOffIcon aria-hidden="true" />
-                      ) : (
-                        <EyeIcon aria-hidden="true" />
-                      )}
-                    </Button>
-                  </div>
-                )}
-              </FormGroup>
-
-              <Button type="submit" size="lg" disabled={!isValid || login.isPending}>
-                {login.isPending ? 'Signing in…' : 'Sign in'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </main>
+        <Button type="submit" size="lg" disabled={!isValid || login.isPending}>
+          {login.isPending ? 'Signing in…' : 'Sign in'}
+        </Button>
+      </form>
+    </AuthShell>
   )
 }

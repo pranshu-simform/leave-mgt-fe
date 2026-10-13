@@ -1,10 +1,14 @@
 import {
   CalendarDaysIcon,
+  CalendarHeartIcon,
   CalendarRangeIcon,
   ClipboardCheckIcon,
+  FileStackIcon,
   LayoutDashboardIcon,
+  ListChecksIcon,
   PaletteIcon,
-  ShieldCheckIcon,
+  ScaleIcon,
+  UsersIcon,
   type LucideIcon,
 } from 'lucide-react'
 import { lazy, type ComponentType, type LazyExoticComponent } from 'react'
@@ -66,11 +70,37 @@ export const PATH_ROUTES = {
     COMPONENT: lazy(() => import('@/features/approvals/pages/ApprovalsPage')),
     NAV: { LABEL: 'Approvals', ICON: ClipboardCheckIcon },
   },
-  ADMIN: {
-    PATH: '/admin',
+  // HR only: one page and one sidebar entry each.
+  ADMIN_LEAVE_TYPES: {
+    PATH: '/admin/leave-types',
     ALLOWED_ROLES: [USER_ROLES.HR_ADMIN],
-    COMPONENT: lazy(() => import('@/features/admin/pages/AdminPage')),
-    NAV: { LABEL: 'Admin', ICON: ShieldCheckIcon },
+    COMPONENT: lazy(() => import('@/features/admin/pages/LeaveTypesPage')),
+    NAV: { LABEL: 'Leave types', ICON: ListChecksIcon },
+  },
+  ADMIN_HOLIDAYS: {
+    PATH: '/admin/holidays',
+    ALLOWED_ROLES: [USER_ROLES.HR_ADMIN],
+    COMPONENT: lazy(() => import('@/features/admin/pages/HolidaysPage')),
+    NAV: { LABEL: 'Holidays', ICON: CalendarHeartIcon },
+  },
+  ADMIN_USERS: {
+    PATH: '/admin/users',
+    ALLOWED_ROLES: [USER_ROLES.HR_ADMIN],
+    COMPONENT: lazy(() => import('@/features/admin/pages/UsersPage')),
+    NAV: { LABEL: 'Users', ICON: UsersIcon },
+  },
+  ADMIN_BALANCES: {
+    PATH: '/admin/balances',
+    ALLOWED_ROLES: [USER_ROLES.HR_ADMIN],
+    COMPONENT: lazy(() => import('@/features/admin/pages/BalancesPage')),
+    NAV: { LABEL: 'Balances', ICON: ScaleIcon },
+  },
+  ADMIN_REQUESTS: {
+    PATH: '/admin/requests',
+    ALLOWED_ROLES: [USER_ROLES.HR_ADMIN],
+    COMPONENT: lazy(() => import('@/features/admin/pages/AdminRequestsPage')),
+    // "All", so it is not mistaken for "My requests". Also the active entry on nothing else.
+    NAV: { LABEL: 'All requests', ICON: FileStackIcon },
   },
   REQUEST_EDIT: {
     PATH: '/requests/:id/edit',
@@ -80,15 +110,17 @@ export const PATH_ROUTES = {
 } satisfies Record<string, PathRoute>
 
 export const LOGIN_PATH = '/login'
+// Public, like sign-in: the link in the email a new user gets (`?token=`).
+export const SET_PASSWORD_PATH = '/set-password'
 
 // Path builders for the dynamic routes.
 export const requestDetailPath = (id: string): string =>
   PATH_ROUTES.REQUEST_DETAIL.PATH.replace(':id', id)
 export const requestEditPath = (id: string): string =>
   PATH_ROUTES.REQUEST_EDIT.PATH.replace(':id', id)
-// The admin Requests tab, optionally narrowed to one person.
+// The HR list of every request, optionally narrowed to one person.
 export const adminRequestsPath = (userId?: string): string =>
-  `${PATH_ROUTES.ADMIN.PATH}?tab=requests${userId ? `&userId=${userId}` : ''}`
+  `${PATH_ROUTES.ADMIN_REQUESTS.PATH}${userId ? `?userId=${userId}` : ''}`
 
 // Dev only: Vite removes this (and the page's chunk) from the production build. It needs no
 // sign-in, so the style guide works without the API.

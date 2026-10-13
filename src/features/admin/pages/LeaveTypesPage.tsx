@@ -1,6 +1,6 @@
 import { ListChecksIcon, PlusIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { DataTable, EmptyState } from '@/components/shared'
+import { DataTable, EmptyState, PageHeader } from '@/components/shared'
 import { Button } from '@/components/ui'
 import { buildLeaveTypeColumns } from '@/features/admin/components/leaveTypeColumns'
 import { LeaveTypeDialog } from '@/features/admin/components/LeaveTypeDialog'
@@ -10,7 +10,7 @@ import { useTableFilters } from '@/hooks/useTableFilters'
 
 const NO_FILTERS = {}
 
-export function LeaveTypesPanel() {
+export default function LeaveTypesPage() {
   const { page, pageSize, setPage, setPageSize } = useTableFilters({ defaults: NO_FILTERS })
   const { data, isLoading, isFetching, isError, refetch } = useAdminLeaveTypes()
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -36,17 +36,21 @@ export function LeaveTypesPanel() {
 
   return (
     <>
-      <div className="flex justify-end pb-4">
-        <Button
-          onClick={() => {
-            setTarget(null)
-            setDialogOpen(true)
-          }}
-        >
-          <PlusIcon aria-hidden="true" />
-          New leave type
-        </Button>
-      </div>
+      <PageHeader
+        title="Leave types"
+        description="The rules for each kind of leave. A new type that draws from a balance is allocated to everyone at once; other edits apply to new requests only."
+        actions={
+          <Button
+            onClick={() => {
+              setTarget(null)
+              setDialogOpen(true)
+            }}
+          >
+            <PlusIcon aria-hidden="true" />
+            New leave type
+          </Button>
+        }
+      />
       <DataTable
         caption="Leave types and their rules"
         columns={columns}

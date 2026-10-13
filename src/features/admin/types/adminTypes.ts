@@ -46,7 +46,16 @@ export interface AdminUser {
   email: string
   role: UserRole
   isActive: boolean
+  // False for someone HR added who has not set a password yet.
+  hasPassword: boolean
   manager: { id: string; name: string } | null
+}
+
+export interface CreateUserPayload {
+  name: string
+  email: string
+  role: UserRole
+  managerId: string | null
 }
 
 export interface AdminUserParams {

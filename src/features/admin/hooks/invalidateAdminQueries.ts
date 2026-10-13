@@ -33,6 +33,12 @@ export function invalidateHolidayQueries(queryClient: QueryClient): Promise<unkn
   ])
 }
 
+// A new person shows in both people lists (Users and Balances share the key), gets balances of their
+// own, and changes the size of their manager's team on the dashboard.
+export function invalidateUserQueries(queryClient: QueryClient): Promise<unknown> {
+  return invalidateAll(queryClient, [QUERY_KEYS.ADMIN.USERS.ALL, QUERY_KEYS.DASHBOARD.ALL])
+}
+
 // An allocation or an adjustment changes allowances: the person's balance list, the employee's
 // dashboard (BALANCES covers both), the balance impact in an approval review and the "balance
 // after" of a live request preview. The reconcile result is stale too.

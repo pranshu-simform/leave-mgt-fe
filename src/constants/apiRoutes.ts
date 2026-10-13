@@ -6,6 +6,8 @@ export const API_ROUTES = {
     REFRESH: `${API_V1}/auth/refresh`,
     LOGOUT: `${API_V1}/auth/logout`,
     ME: `${API_V1}/auth/me`,
+    SET_PASSWORD_CHECK: `${API_V1}/auth/set-password/check`,
+    SET_PASSWORD: `${API_V1}/auth/set-password`,
   },
   LEAVE_TYPES: {
     LIST: `${API_V1}/leave-types`,
@@ -43,6 +45,8 @@ export const API_ROUTES = {
     },
     USERS: {
       LIST: `${API_V1}/admin/users`,
+      CREATE: `${API_V1}/admin/users`,
+      RESEND_INVITE: `${API_V1}/admin/users/:id/resend-invite`,
     },
     REQUESTS: {
       LIST: `${API_V1}/admin/requests`,

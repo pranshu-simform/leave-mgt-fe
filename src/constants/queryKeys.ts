@@ -1,6 +1,7 @@
 export const QUERY_KEYS = {
   AUTH: {
     ME: ['auth', 'me'] as const,
+    SET_PASSWORD_LINK: (token: string) => ['auth', 'set-password-link', token] as const,
   },
   LEAVE_TYPES: {
     ALL: ['leave-types'] as const,
@@ -35,7 +36,10 @@ export const QUERY_KEYS = {
       ALL: ['admin', 'balances'] as const,
       RECONCILE: (year: number) => ['admin', 'balances', 'reconcile', year] as const,
     },
-    USERS: (params: object) => ['admin', 'users', params] as const,
+    USERS: {
+      ALL: ['admin', 'users'] as const,
+      LIST: (params: object) => ['admin', 'users', params] as const,
+    },
     REQUESTS: {
       ALL: ['admin', 'requests'] as const,
       LIST: (params: object) => ['admin', 'requests', params] as const,

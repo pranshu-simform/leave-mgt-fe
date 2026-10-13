@@ -1,11 +1,18 @@
 import { lazy, Suspense, type ReactNode } from 'react'
 import type { RouteObject } from 'react-router'
 import { PageLoader, PageNotFound, RoleRoute, RouteErrorPage } from '@/components/shared'
-import { DEV_ROUTES, LOGIN_PATH, PATH_ROUTES, type PathRoute } from '@/constants/pathRoutes'
+import {
+  DEV_ROUTES,
+  LOGIN_PATH,
+  PATH_ROUTES,
+  SET_PASSWORD_PATH,
+  type PathRoute,
+} from '@/constants/pathRoutes'
 import { DevLayout } from '@/routes/DevLayout'
 import { PrivateLayout } from '@/routes/PrivateLayout'
 
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
+const SetPasswordPage = lazy(() => import('@/features/auth/pages/SetPasswordPage'))
 
 function withSuspense(element: ReactNode) {
   return <Suspense fallback={<PageLoader />}>{element}</Suspense>
@@ -27,6 +34,11 @@ function buildRoute({
 
 export const routes: RouteObject[] = [
   { path: LOGIN_PATH, element: withSuspense(<LoginPage />), errorElement: <RouteErrorPage /> },
+  {
+    path: SET_PASSWORD_PATH,
+    element: withSuspense(<SetPasswordPage />),
+    errorElement: <RouteErrorPage />,
+  },
   ...(import.meta.env.DEV
     ? [
         {

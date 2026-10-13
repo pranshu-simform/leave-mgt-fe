@@ -1,7 +1,14 @@
-import { CalendarOffIcon, InfoIcon, PlusIcon } from 'lucide-react'
+import { CalendarOffIcon, PlusIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { AppSelect, ConfirmDialog, DataTable, EmptyState, FormGroup } from '@/components/shared'
-import { Alert, AlertDescription, Button } from '@/components/ui'
+import {
+  AppSelect,
+  ConfirmDialog,
+  DataTable,
+  EmptyState,
+  FormGroup,
+  PageHeader,
+} from '@/components/shared'
+import { Button } from '@/components/ui'
 import { buildHolidayColumns } from '@/features/admin/components/holidayColumns'
 import { HolidayDialog } from '@/features/admin/components/HolidayDialog'
 import { useAdminHolidays } from '@/features/admin/hooks/useAdminHolidays'
@@ -28,7 +35,7 @@ function yearOptions(selected: number) {
     .map((year) => ({ value: String(year), label: String(year) }))
 }
 
-export function HolidaysPanel() {
+export default function HolidaysPage() {
   const { filters, page, pageSize, setFilter, setPage, setPageSize } = useTableFilters({
     defaults: FILTER_DEFAULTS,
     validate: FILTER_VALIDATORS,
@@ -61,30 +68,27 @@ export function HolidaysPanel() {
 
   return (
     <>
-      <Alert className="mb-4">
-        <InfoIcon aria-hidden="true" />
-        <AlertDescription>
-          A change applies to new previews and requests. Requests already submitted keep the working
-          days they were counted with.
-        </AlertDescription>
-      </Alert>
-      <div className="flex flex-wrap items-end justify-between gap-3 pb-4">
-        <div className="w-full sm:w-40">
-          <FormGroup label="Year">
-            {(controlProps) => (
-              <AppSelect
-                {...controlProps}
-                options={yearOptions(year)}
-                value={String(year)}
-                onValueChange={(value) => setFilter('year', value)}
-              />
-            )}
-          </FormGroup>
-        </div>
-        <Button onClick={() => setAddOpen(true)}>
-          <PlusIcon aria-hidden="true" />
-          Add holiday
-        </Button>
+      <PageHeader
+        title="Holidays"
+        description="Public holidays do not count as working days. A change applies to new previews and requests; requests already submitted keep the working days they were counted with."
+        actions={
+          <Button onClick={() => setAddOpen(true)}>
+            <PlusIcon aria-hidden="true" />
+            Add holiday
+          </Button>
+        }
+      />
+      <div className="w-full pb-4 sm:w-40">
+        <FormGroup label="Year">
+          {(controlProps) => (
+            <AppSelect
+              {...controlProps}
+              options={yearOptions(year)}
+              value={String(year)}
+              onValueChange={(value) => setFilter('year', value)}
+            />
+          )}
+        </FormGroup>
       </div>
       <DataTable
         caption={`Public holidays in ${year}`}
