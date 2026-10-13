@@ -8,7 +8,6 @@ export interface AdminLeaveType extends LeaveType {
 }
 
 export interface CreateLeaveTypePayload {
-  code: string
   name: string
   drawsFromBalance: boolean
   defaultAllowanceDays: number
@@ -19,9 +18,9 @@ export interface CreateLeaveTypePayload {
   requiresApproval: boolean
 }
 
-// `code` and `drawsFromBalance` are fixed after creation (the server rejects them).
+// `drawsFromBalance` is fixed after creation (the server rejects it).
 export type UpdateLeaveTypePayload = Partial<
-  Omit<CreateLeaveTypePayload, 'code' | 'drawsFromBalance'> & { isActive: boolean }
+  Omit<CreateLeaveTypePayload, 'drawsFromBalance'> & { isActive: boolean }
 >
 
 export interface AdminHoliday {
@@ -85,7 +84,7 @@ export interface AllocationResult {
 export interface BalanceDrift {
   balanceId: string
   user: { id: string; name: string }
-  leaveType: { id: string; code: string; name: string }
+  leaveType: { id: string; name: string }
   allowance: number
   expectedAllowance: number
   used: number

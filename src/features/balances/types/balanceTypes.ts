@@ -1,6 +1,5 @@
 export interface Balance {
   leaveTypeId: string
-  code: string
   name: string
   year: number
   allowance: number

@@ -1,6 +1,5 @@
 export interface LeaveType {
   id: string
-  code: string
   name: string
   drawsFromBalance: boolean
   defaultAllowanceDays: number

@@ -1,5 +1,6 @@
-// Leave types take a color slot (cat-1 to cat-8) by their position in the code-sorted list of types,
-// so a type keeps its color in every session and on every screen. The class names are written out
+// Leave types take a color slot (cat-1 to cat-8) by their position in the id-sorted list of types.
+// Ids are time-ordered, so that is creation order: a type keeps its color in every session and on
+// every screen, a rename never changes it, and a new type is added at the end. The class names are written out
 // in full so Tailwind sees them.
 const SOLID = [
   'bg-cat-1 text-cat-foreground',
@@ -34,9 +35,9 @@ const SWATCH = [
   'bg-cat-8',
 ] as const
 
-export function typeSlot(code: string, allCodes: readonly string[]): number {
-  const sorted = [...new Set(allCodes)].sort()
-  const index = sorted.indexOf(code)
+export function typeSlot(typeId: string, allTypeIds: readonly string[]): number {
+  const sorted = [...new Set(allTypeIds)].sort()
+  const index = sorted.indexOf(typeId)
   return (index < 0 ? 0 : index) % SOLID.length
 }
 

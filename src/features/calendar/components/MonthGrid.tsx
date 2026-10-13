@@ -12,8 +12,8 @@ interface MonthGridProps {
   month: string
   items: readonly AbsenceItem[]
   holidays: readonly Holiday[]
-  // Every leave type code, so a type keeps its color whichever types are away this month.
-  typeCodes: readonly string[]
+  // Every leave type id, so a type keeps its color whichever types are away this month.
+  typeIds: readonly string[]
   // People away per weekday (managers and HR); left out for employees.
   load?: readonly SummaryDay[]
   isBusy?: boolean
@@ -27,7 +27,7 @@ export function MonthGrid({
   month,
   items,
   holidays,
-  typeCodes,
+  typeIds,
   load,
   isBusy = false,
 }: Readonly<MonthGridProps>) {
@@ -112,7 +112,7 @@ export function MonthGrid({
                 >
                   {person.name}
                 </th>
-                {renderCells(person, days, shade, typeCodes)}
+                {renderCells(person, days, shade, typeIds)}
               </tr>
             ))}
           </tbody>
@@ -126,7 +126,7 @@ function renderCells(
   person: ReturnType<typeof buildRows>[number],
   days: readonly string[],
   shade: (date: string) => string,
-  typeCodes: readonly string[],
+  typeIds: readonly string[],
 ) {
   const cells = []
   let day = 1
@@ -139,7 +139,7 @@ function renderCells(
           colSpan={leave.endDay - leave.startDay + 1}
           className="p-0.5"
         >
-          <LeaveBar person={person} leave={leave} slot={typeSlot(leave.typeCode, typeCodes)} />
+          <LeaveBar person={person} leave={leave} slot={typeSlot(leave.typeId, typeIds)} />
         </td>,
       )
       day = leave.endDay + 1

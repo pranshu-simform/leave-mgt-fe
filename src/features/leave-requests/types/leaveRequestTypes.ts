@@ -2,7 +2,7 @@ import type { LeaveStatus } from '@/constants/leaveStatus'
 
 export interface LeaveRequest {
   id: string
-  leaveType: { id: string; code: string; name: string }
+  leaveType: { id: string; name: string }
   startDate: string
   endDate: string
   days: number
@@ -79,7 +79,7 @@ export interface AbsenceItem {
   requestId: string
   userId: string
   name: string
-  leaveType: { code: string; name: string }
+  leaveType: { id: string; name: string }
   startDate: string
   endDate: string
   status: 'PENDING' | 'APPROVED'

@@ -4,7 +4,7 @@ import type { AbsenceItem } from '@/features/leave-requests/types/leaveRequestTy
 // the month, so a leave that starts earlier or ends later is cut at the edge of the grid.
 export interface LeaveSpan {
   requestId: string
-  typeCode: string
+  typeId: string
   typeName: string
   status: AbsenceItem['status']
   startDay: number
@@ -41,7 +41,7 @@ export function buildRows(
     const row = people.get(item.userId) ?? { userId: item.userId, name: item.name, leaves: [] }
     row.leaves.push({
       requestId: item.requestId,
-      typeCode: item.leaveType.code,
+      typeId: item.leaveType.id,
       typeName: item.leaveType.name,
       status: item.status,
       startDay: item.startDate < first ? 1 : dayOf(item.startDate),
