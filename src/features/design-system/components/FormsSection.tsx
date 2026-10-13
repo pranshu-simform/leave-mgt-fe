@@ -9,6 +9,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Switch,
   Textarea,
 } from '@/components/ui'
 import { Section, Subsection } from './Section'
@@ -71,6 +72,28 @@ export function FormsSection() {
           <div className="flex items-center gap-2">
             <Checkbox id="design-system-terms" defaultChecked />
             <Label htmlFor="design-system-terms">I have arranged a handover</Label>
+          </div>
+        </Subsection>
+        <Subsection title="Switch">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col gap-0.5">
+                <Label htmlFor="design-system-note-switch">Note required</Label>
+                <p className="text-caption text-muted-foreground">
+                  A request needs a note for the approver.
+                </p>
+              </div>
+              <Switch id="design-system-note-switch" />
+            </div>
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col gap-0.5">
+                <Label htmlFor="design-system-active-switch">Active</Label>
+                <p className="text-caption text-muted-foreground">
+                  On state, with focus ring on Tab.
+                </p>
+              </div>
+              <Switch id="design-system-active-switch" defaultChecked />
+            </div>
           </div>
         </Subsection>
       </div>

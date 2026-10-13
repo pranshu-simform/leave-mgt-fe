@@ -46,6 +46,11 @@ export function formatDate(iso: string): string {
   return format(parseIsoDate(iso), 'd MMM yyyy')
 }
 
+// "Wed 24 Nov 2026".
+export function formatWeekdayDate(iso: string): string {
+  return format(parseIsoDate(iso), 'EEE d MMM yyyy')
+}
+
 // "1 Mar 2026", "1 to 5 Mar 2026", "28 Feb to 3 Mar 2026" or "30 Dec 2026 to 2 Jan 2027".
 export function formatDateRange(startIso: string, endIso: string): string {
   const start = parseIsoDate(startIso)
