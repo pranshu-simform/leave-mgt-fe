@@ -33,6 +33,17 @@ export const API_ROUTES = {
       CREATE: `${API_V1}/admin/holidays`,
       DELETE: `${API_V1}/admin/holidays/:id`,
     },
+    BALANCES: {
+      ALLOCATE: `${API_V1}/admin/balances/allocate`,
+      ADJUST: `${API_V1}/admin/balances/adjust`,
+      RECONCILE: `${API_V1}/admin/balances/reconcile`,
+    },
+    USERS: {
+      LIST: `${API_V1}/admin/users`,
+    },
+    REQUESTS: {
+      LIST: `${API_V1}/admin/requests`,
+    },
   },
   APPROVALS: {
     LIST: `${API_V1}/approvals`,
