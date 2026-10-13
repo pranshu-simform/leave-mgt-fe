@@ -191,7 +191,7 @@
   /* Shape, layout */
   --radius: 0.75rem;
   --layout-header-height: 3.5rem;
-  --layout-content-max: 80rem;
+  --layout-content-max: 100rem;
   --layout-gutter: clamp(1rem, 2.5vw, 2rem);
 }
 

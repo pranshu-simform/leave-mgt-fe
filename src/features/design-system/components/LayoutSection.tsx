@@ -65,7 +65,7 @@ export function LayoutSection() {
             <dt className="text-muted-foreground">header height</dt>
             <dd>h-header (3.5rem)</dd>
             <dt className="text-muted-foreground">content width</dt>
-            <dd>max-w-content (80rem)</dd>
+            <dd>max-w-content (100rem)</dd>
             <dt className="text-muted-foreground">page gutter</dt>
             <dd>px-gutter (1rem to 2rem)</dd>
             <dt className="text-muted-foreground">sidebar</dt>

@@ -156,7 +156,7 @@ export function RequestForm({
   return (
     <>
       {notice}
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,48rem)_minmax(0,22rem)]">
         <form
           noValidate
           onSubmit={(event) => void form.handleSubmit(save)(event)}
