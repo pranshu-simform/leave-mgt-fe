@@ -62,7 +62,8 @@ export interface AdminUserParams {
   page: number
   limit: number
   search?: string
-  role?: UserRole
+  // One role, or several (sent as `MANAGER,HR_ADMIN`).
+  role?: UserRole | readonly UserRole[]
   isActive?: boolean
 }
 

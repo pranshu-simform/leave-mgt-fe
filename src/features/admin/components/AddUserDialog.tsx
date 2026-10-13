@@ -48,29 +48,32 @@ const ROLE_OPTIONS = Object.values(USER_ROLES).map((role) => ({
   label: ROLE_LABELS[role],
 }))
 
-// Everyone who can approve is a possible manager: active managers and active HR admins. Each role
-// is its own request (the list takes one role), and neither loads until the dialog opens.
-const MANAGERS = { page: 1, limit: 100, role: USER_ROLES.MANAGER, isActive: true } as const
-const HR_ADMINS = { page: 1, limit: 100, role: USER_ROLES.HR_ADMIN, isActive: true } as const
+// Everyone who can approve is a possible manager: active managers and active HR admins, in one
+// request that loads only when the dialog opens.
+const MANAGERS = {
+  page: 1,
+  limit: 100,
+  role: [USER_ROLES.MANAGER, USER_ROLES.HR_ADMIN],
+  isActive: true,
+} as const
 
 export function AddUserDialog({ open, onOpenChange }: Readonly<AddUserDialogProps>) {
   const create = useCreateUser()
   const managers = useAdminUsers(MANAGERS, open)
-  const hrAdmins = useAdminUsers(HR_ADMINS, open)
   const managerOptions = useMemo(
     () => [
       { value: '', label: 'No manager' },
-      ...[...(managers.data?.items ?? []), ...(hrAdmins.data?.items ?? [])]
+      ...(managers.data?.items ?? [])
         .toSorted((a, b) => a.name.localeCompare(b.name))
         .map((person) => ({
           value: person.id,
           label: `${person.name} (${ROLE_LABELS[person.role]})`,
         })),
     ],
-    [managers.data, hrAdmins.data],
+    [managers.data],
   )
-  const managersFailed = managers.isError || hrAdmins.isError
-  const managersLoading = managers.isLoading || hrAdmins.isLoading
+  const managersFailed = managers.isError
+  const managersLoading = managers.isLoading
 
   const form = useForm<UserFormData>({
     resolver: zodResolver(userSchema),

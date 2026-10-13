@@ -73,7 +73,12 @@ export const adminApi = {
   listUsers: async (params: AdminUserParams): Promise<PaginatedResult<AdminUser>> => {
     const response = await apiClient.get<PaginatedApiResponse<AdminUser>>(
       API_ROUTES.ADMIN.USERS.LIST,
-      { params },
+      {
+        params: {
+          ...params,
+          role: Array.isArray(params.role) ? params.role.join(',') : params.role,
+        },
+      },
     )
     return { items: response.data, pagination: response.pagination }
   },
