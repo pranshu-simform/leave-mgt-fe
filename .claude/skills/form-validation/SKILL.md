@@ -56,10 +56,10 @@ const [leaveTypeId, startDate, endDate, note] = useWatch({ control: form.control
 ```
 
 - **Problems the server reports before submit** (the preview endpoint's `violations`, each with a `field`) are shown under that field, next to the form's own errors, so they are announced and linked with `aria-describedby`. The form's error wins over a preview problem for the same field.
-- **Server errors at submit** go through `applyServerError`: `details[{ field, message }]` map onto fields with `setError` (a field the form does not have becomes a toast), a constraint error without details (the overlap rule) goes under the field it concerns, anything else is a toast. A page can handle codes itself first (`onSubmitError`, for example edit's `VERSION_CONFLICT`).
+- **Server errors at submit** go through `applyServerError`: `details[{ field, message }]` map onto fields with `setError` (a field the form does not have becomes a toast), a constraint error without details (the overlap rule) goes under the field it concerns, anything else is a toast. A page can handle codes itself first (`onSubmitError`, for example edit's `REQUEST_LOCKED`).
 - **Submit** is disabled with a tooltip (`WithTooltip`) saying why: invalid, a problem from the server, still checking, nothing changed (edit). The handler takes a synchronous lock (a ref) so two clicks in one tick send one request.
 - **Unsaved changes:** `useBlocker` (the app uses a data router) with a `ConfirmDialog` when the form is dirty. After a save, store the result in state and navigate from an effect, so the blocker sees the saved state and lets it through.
-- **Editing something versioned:** keep a snapshot of the record when the form opens and send its `version`, not the live query's, or a change made elsewhere is overwritten silently. Remount the form (a `key`) to reload.
+- **Editing an existing record:** keep a snapshot of the record when the form opens and build `defaultValues` from it, not from the live query, so a background refetch never resets what the user is typing.
 
 ## Rules
 

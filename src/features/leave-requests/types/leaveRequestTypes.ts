@@ -8,7 +8,6 @@ export interface LeaveRequest {
   days: number
   note: string | null
   status: LeaveStatus
-  version: number
   requester: { id: string; name: string }
   decidedAt: string | null
   createdAt: string
@@ -55,8 +54,6 @@ export interface UpdatePayload {
   startDate: string
   endDate: string
   note?: string
-  // The version the user last saw; the server refuses the edit if the request has changed since.
-  version: number
 }
 
 export type ViolationCode =

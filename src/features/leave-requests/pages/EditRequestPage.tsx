@@ -1,8 +1,8 @@
-import { FileQuestionIcon, TriangleAlertIcon } from 'lucide-react'
+import { FileQuestionIcon } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router'
 import { EmptyState, ErrorState, PageHeader } from '@/components/shared'
-import { Alert, AlertAction, AlertDescription, AlertTitle, Button, Skeleton } from '@/components/ui'
+import { Button, Skeleton } from '@/components/ui'
 import { PATH_ROUTES, requestDetailPath } from '@/constants/pathRoutes'
 import { RequestForm } from '@/features/leave-requests/components/RequestForm'
 import { useLeaveRequest } from '@/features/leave-requests/hooks/useLeaveRequest'
@@ -22,15 +22,10 @@ function LeaveToDetail({ id, message }: Readonly<{ id: string; message: string }
 }
 
 // The form works from the request as it was when the form opened (the snapshot), not from the live
-// query: the version sent with the edit must be the one the user saw, or a change made elsewhere
-// would be overwritten without a warning.
-function EditForm({
-  request,
-  onReload,
-}: Readonly<{ request: LeaveRequest; onReload: () => Promise<void> }>) {
+// query, so a background refetch never resets what the user is typing.
+function EditForm({ request }: Readonly<{ request: LeaveRequest }>) {
   const navigate = useNavigate()
   const [snapshot] = useState(request)
-  const [conflict, setConflict] = useState(false)
   const update = useUpdateRequest(snapshot.id)
   const done = useCallback(
     () => void navigate(requestDetailPath(snapshot.id)),
@@ -48,36 +43,15 @@ function EditForm({
       }}
       lockedTypeName={snapshot.leaveType.name}
       cancelTo={requestDetailPath(snapshot.id)}
-      notice={
-        conflict && (
-          <Alert variant="destructive" className="mb-6">
-            <TriangleAlertIcon aria-hidden="true" />
-            <AlertTitle>This request was changed elsewhere</AlertTitle>
-            <AlertDescription>
-              Reload to see the latest version, then make your change again.
-            </AlertDescription>
-            <AlertAction>
-              <Button variant="outline" size="sm" onClick={() => void onReload()}>
-                Reload
-              </Button>
-            </AlertAction>
-          </Alert>
-        )
-      }
       onSubmit={(values) =>
         update.mutateAsync({
           startDate: values.startDate,
           endDate: values.endDate,
           note: values.note.trim() || undefined,
-          version: snapshot.version,
         })
       }
       onDone={done}
       onSubmitError={(error) => {
-        if (error.code === 'VERSION_CONFLICT') {
-          setConflict(true)
-          return true
-        }
         if (error.code === 'REQUEST_LOCKED' || error.code === 'NOT_FOUND') {
           // Decided (or gone) in the meantime: say so and show the request as it is now.
           showError(error.message, EDIT_NOT_ALLOWED_TOAST)
@@ -94,8 +68,6 @@ export default function EditRequestPage() {
   const { id = '' } = useParams()
   const { user } = useAuth()
   const { data: request, isLoading, isError, error, refetch } = useLeaveRequest(id)
-  // Remounting the form re-reads the request, which is how "Reload" resets it.
-  const [reloads, setReloads] = useState(0)
 
   if (isError) {
     if (isApiError(error) && error.status === 404) {
@@ -149,14 +121,7 @@ export default function EditRequestPage() {
           { label: 'Edit' },
         ]}
       />
-      <EditForm
-        key={reloads}
-        request={request}
-        onReload={async () => {
-          await refetch()
-          setReloads((count) => count + 1)
-        }}
-      />
+      <EditForm request={request} />
     </>
   )
 }

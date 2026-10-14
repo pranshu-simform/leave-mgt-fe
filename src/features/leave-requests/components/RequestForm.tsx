@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { Link, useBlocker } from 'react-router'
 import {
@@ -32,11 +32,9 @@ interface RequestFormProps {
   // Resolves with the saved request, or rejects with the ApiError.
   onSubmit: (values: LeaveRequestFormData) => Promise<LeaveRequest>
   onDone: (request: LeaveRequest) => void
-  // Return true when the page handled the error itself (an edit conflict).
+  // Return true when the page handled the error itself (a request that was decided meanwhile).
   onSubmitError?: (error: ApiError) => boolean
   cancelTo: string
-  // Shown above the form, for example the "changed elsewhere" alert.
-  notice?: ReactNode
 }
 
 const FORM_FIELDS = ['leaveTypeId', 'startDate', 'endDate', 'note'] as const
@@ -54,7 +52,6 @@ export function RequestForm({
   onDone,
   onSubmitError,
   cancelTo,
-  notice,
 }: Readonly<RequestFormProps>) {
   const form = useForm<LeaveRequestFormData>({
     resolver: zodResolver(leaveRequestSchema),
@@ -155,7 +152,6 @@ export function RequestForm({
 
   return (
     <>
-      {notice}
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,48rem)_minmax(0,22rem)]">
         <form
           noValidate
