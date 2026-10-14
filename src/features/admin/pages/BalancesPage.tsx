@@ -1,10 +1,9 @@
-import { ScaleIcon, SearchXIcon, UsersIcon } from 'lucide-react'
+import { SearchXIcon, UsersIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { DataTable, EmptyState, PageHeader } from '@/components/shared'
 import { Button } from '@/components/ui'
 import { AllocateDialog } from '@/features/admin/components/AllocateDialog'
 import { PersonBalancesDialog } from '@/features/admin/components/PersonBalancesDialog'
-import { ReconcileDialog } from '@/features/admin/components/ReconcileDialog'
 import { buildUserColumns } from '@/features/admin/components/userColumns'
 import { UserFilterBar } from '@/features/admin/components/UserFilterBar'
 import { useAdminUsers } from '@/features/admin/hooks/useAdminUsers'
@@ -30,7 +29,6 @@ export default function BalancesPage() {
   const [person, setPerson] = useState<AdminUser | null>(null)
   const [personOpen, setPersonOpen] = useState(false)
   const [allocateOpen, setAllocateOpen] = useState(false)
-  const [reconcileOpen, setReconcileOpen] = useState(false)
 
   const columns = useMemo(
     () =>
@@ -50,16 +48,8 @@ export default function BalancesPage() {
     <>
       <PageHeader
         title="Balances"
-        description="Find a person to see and adjust their balances. Allocating creates the balances that are missing; checking compares every balance with its ledger."
-        actions={
-          <>
-            <Button variant="outline" onClick={() => setReconcileOpen(true)}>
-              <ScaleIcon aria-hidden="true" />
-              Check balances
-            </Button>
-            <Button onClick={() => setAllocateOpen(true)}>Allocate a year</Button>
-          </>
-        }
+        description="Find a person to see and adjust their balances. Allocating creates the balances that are missing."
+        actions={<Button onClick={() => setAllocateOpen(true)}>Allocate a year</Button>}
       />
       <div className="flex flex-col gap-4">
         <UserFilterBar
@@ -106,7 +96,6 @@ export default function BalancesPage() {
       </div>
       <PersonBalancesDialog open={personOpen} onOpenChange={setPersonOpen} user={person} />
       <AllocateDialog open={allocateOpen} onOpenChange={setAllocateOpen} />
-      <ReconcileDialog open={reconcileOpen} onOpenChange={setReconcileOpen} />
     </>
   )
 }
