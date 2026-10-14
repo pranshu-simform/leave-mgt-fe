@@ -50,6 +50,9 @@ export interface RequestPayload {
   note?: string
 }
 
+// What the preview takes: the note does not change the answer, so it is not sent.
+export type PreviewPayload = Pick<RequestPayload, 'leaveTypeId' | 'startDate' | 'endDate'>
+
 export interface UpdatePayload {
   startDate: string
   endDate: string

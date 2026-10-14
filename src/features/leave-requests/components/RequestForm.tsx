@@ -37,6 +37,8 @@ interface RequestFormProps {
   cancelTo: string
 }
 
+const NOTE_REQUIRED_MESSAGE = 'A note is required for this leave type'
+
 const FORM_FIELDS = ['leaveTypeId', 'startDate', 'endDate', 'note'] as const
 type FormField = (typeof FORM_FIELDS)[number]
 
@@ -65,9 +67,10 @@ export function RequestForm({
     control: form.control,
     name: ['leaveTypeId', 'startDate', 'endDate', 'note'],
   })
+  // The note is not part of the preview, so typing it never triggers a new check.
   const current = useMemo(
-    () => ({ leaveTypeId, startDate, endDate, note: note.trim() || undefined }),
-    [leaveTypeId, startDate, endDate, note],
+    () => ({ leaveTypeId, startDate, endDate }),
+    [leaveTypeId, startDate, endDate],
   )
   const debounced = useDebounce(current)
   const preview = usePreviewRequest(debounced)
@@ -75,8 +78,7 @@ export function RequestForm({
   const waitingForDebounce =
     debounced.leaveTypeId !== current.leaveTypeId ||
     debounced.startDate !== current.startDate ||
-    debounced.endDate !== current.endDate ||
-    debounced.note !== current.note
+    debounced.endDate !== current.endDate
   const isChecking = waitingForDebounce || preview.isFetching
   // A 400 from the preview (for example an unknown leave type) names its field like any other.
   const previewProblems =
@@ -87,12 +89,15 @@ export function RequestForm({
   const problemFor = (...fields: string[]) =>
     problems.find((p) => fields.includes(p.field))?.message
   const selectedType = leaveTypes?.find((type) => type.id === leaveTypeId)
+  // "This type requires a note" comes from the leave type itself; submit still enforces it.
+  const noteMissing = Boolean(selectedType?.requiresNote) && note.trim() === ''
 
   // The submit button explains itself when it cannot be used.
   let blockedReason: string | null = null
   if (!isValid) {
     blockedReason = Object.values(errors)[0]?.message ?? 'Choose a leave type and your dates first.'
-  } else if (problems[0]) blockedReason = problems[0].message
+  } else if (noteMissing) blockedReason = NOTE_REQUIRED_MESSAGE
+  else if (problems[0]) blockedReason = problems[0].message
   else if (checkFailed) blockedReason = 'The dates could not be checked yet. Try the check again.'
   else if (isChecking) blockedReason = 'Checking your request...'
   else if (mode === 'edit' && !isDirty) blockedReason = 'Change the dates or the note to save.'
@@ -216,7 +221,7 @@ export function RequestForm({
             label="Note"
             required={selectedType?.requiresNote}
             description={`${noteLength} / ${NOTE_MAX_LENGTH}. Your manager sees this.`}
-            error={errors.note?.message ?? problemFor('note')}
+            error={errors.note?.message ?? (noteMissing ? NOTE_REQUIRED_MESSAGE : undefined)}
           >
             {(controlProps) => (
               <Textarea

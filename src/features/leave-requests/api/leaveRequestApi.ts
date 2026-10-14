@@ -3,6 +3,7 @@ import type {
   LeaveRequest,
   LeaveRequestListParams,
   RequestEvent,
+  PreviewPayload,
   RequestPayload,
   RequestPreview,
   UpdatePayload,
@@ -42,7 +43,7 @@ export const leaveRequestApi = {
     return { items: response.data, pagination: response.pagination }
   },
 
-  preview: async (payload: RequestPayload) => {
+  preview: async (payload: PreviewPayload) => {
     const response = await apiClient.post<ApiResponse<RequestPreview>>(
       API_ROUTES.LEAVE_REQUESTS.PREVIEW,
       payload,
