@@ -89,22 +89,3 @@ export interface AllocationResult {
   year: number
   created: number
 }
-
-// One balance whose stored numbers disagree with what its ledger adds up to.
-export interface BalanceDrift {
-  balanceId: string
-  user: { id: string; name: string }
-  leaveType: { id: string; name: string }
-  allowance: number
-  expectedAllowance: number
-  used: number
-  expectedUsed: number
-}
-
-export interface ReconcileReport {
-  year: number
-  checked: number
-  // The real number of mismatches; `drifts` holds at most the first 100.
-  driftCount: number
-  drifts: BalanceDrift[]
-}

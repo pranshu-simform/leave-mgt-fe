@@ -31,10 +31,8 @@ export const QUERY_KEYS = {
       ALL: ['admin', 'holidays'] as const,
       LIST: (params: object) => ['admin', 'holidays', params] as const,
     },
-    // Everything the balance screens read, so one invalidation covers the reconcile check too.
     BALANCES: {
       ALL: ['admin', 'balances'] as const,
-      RECONCILE: (year: number) => ['admin', 'balances', 'reconcile', year] as const,
     },
     USERS: {
       ALL: ['admin', 'users'] as const,

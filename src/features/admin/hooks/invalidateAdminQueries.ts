@@ -41,7 +41,7 @@ export function invalidateUserQueries(queryClient: QueryClient): Promise<unknown
 
 // An allocation or an adjustment changes allowances: the person's balance list, the employee's
 // dashboard (BALANCES covers both), the balance impact in an approval review and the "balance
-// after" of a live request preview. The reconcile result is stale too.
+// after" of a live request preview.
 export function invalidateBalanceQueries(queryClient: QueryClient): Promise<unknown> {
   return invalidateAll(queryClient, [
     QUERY_KEYS.ADMIN.BALANCES.ALL,

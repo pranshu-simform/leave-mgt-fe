@@ -41,7 +41,6 @@ export const API_ROUTES = {
     BALANCES: {
       ALLOCATE: `${API_V1}/admin/balances/allocate`,
       ADJUST: `${API_V1}/admin/balances/adjust`,
-      RECONCILE: `${API_V1}/admin/balances/reconcile`,
     },
     USERS: {
       LIST: `${API_V1}/admin/users`,

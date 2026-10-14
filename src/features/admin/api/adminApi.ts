@@ -13,7 +13,6 @@ import type {
   CreateHolidayPayload,
   CreateLeaveTypePayload,
   CreateUserPayload,
-  ReconcileReport,
   UpdateLeaveTypePayload,
 } from '@/features/admin/types/adminTypes'
 import {
@@ -115,14 +114,6 @@ export const adminApi = {
     const response = await apiClient.post<ApiResponse<Balance>>(
       API_ROUTES.ADMIN.BALANCES.ADJUST,
       payload,
-    )
-    return response.data
-  },
-
-  reconcile: async (year: number) => {
-    const response = await apiClient.get<ApiResponse<ReconcileReport>>(
-      API_ROUTES.ADMIN.BALANCES.RECONCILE,
-      { params: { year } },
     )
     return response.data
   },
