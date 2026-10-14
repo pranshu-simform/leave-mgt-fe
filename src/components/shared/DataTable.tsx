@@ -29,7 +29,21 @@ export interface Column<T> {
   mobile?: MobileRole
 }
 
-interface DataTableProps<T> {
+interface PaginationProps {
+  page: number
+  pageSize: number
+  totalRows: number
+  totalPages: number
+  onPageChange: (page: number) => void
+  onPageSizeChange: (pageSize: number) => void
+}
+
+// A short list that comes whole (leave types) passes none of these and gets no pagination bar.
+type NoPaginationProps = { [K in keyof PaginationProps]?: never }
+
+type DataTableProps<T> = BaseProps<T> & (PaginationProps | NoPaginationProps)
+
+interface BaseProps<T> {
   // The table's accessible name, announced by screen readers (not shown).
   caption: string
   columns: readonly Column<T>[]
@@ -42,12 +56,6 @@ interface DataTableProps<T> {
   errorMessage?: string
   onRetry: () => void
   emptyState: ReactNode
-  page: number
-  pageSize: number
-  totalRows: number
-  totalPages: number
-  onPageChange: (page: number) => void
-  onPageSizeChange: (pageSize: number) => void
 }
 
 interface RowCardsProps<T> {
@@ -94,29 +102,24 @@ function RowCards<T>({ caption, columns, rows, getRowId }: Readonly<RowCardsProp
 // filters live in the caller (see useTableFilters). It sits on one glass card with plain rows. Under
 // 768 px (the sidebar's breakpoint) the same columns render as a list of cards instead, so only one
 // of the two is ever in the page.
-export function DataTable<T>({
-  caption,
-  columns,
-  rows,
-  getRowId,
-  isLoading,
-  isFetching = false,
-  isError,
-  errorMessage = 'We could not load this list. Check your connection and try again.',
-  onRetry,
-  emptyState,
-  page,
-  pageSize,
-  totalRows,
-  totalPages,
-  onPageChange,
-  onPageSizeChange,
-}: Readonly<DataTableProps<T>>) {
+export function DataTable<T>(props: Readonly<DataTableProps<T>>) {
+  const {
+    caption,
+    columns,
+    rows,
+    getRowId,
+    isLoading,
+    isFetching = false,
+    isError,
+    errorMessage = 'We could not load this list. Check your connection and try again.',
+    onRetry,
+    emptyState,
+  } = props
   const isMobile = useIsMobile()
 
   if (isLoading) return isMobile ? <CardListSkeleton /> : <TableSkeleton columns={columns.length} />
   if (isError && rows.length === 0) return <ErrorState message={errorMessage} onRetry={onRetry} />
-  if (rows.length === 0 && totalRows === 0) return <>{emptyState}</>
+  if (rows.length === 0 && (props.totalRows ?? 0) === 0) return <>{emptyState}</>
 
   return (
     <Card className="gap-0 overflow-hidden py-0">
@@ -156,14 +159,16 @@ export function DataTable<T>({
           </Table>
         )}
       </div>
-      <PaginationBar
-        page={page}
-        pageSize={pageSize}
-        totalRows={totalRows}
-        totalPages={totalPages}
-        onPageChange={onPageChange}
-        onPageSizeChange={onPageSizeChange}
-      />
+      {props.onPageChange ? (
+        <PaginationBar
+          page={props.page}
+          pageSize={props.pageSize}
+          totalRows={props.totalRows}
+          totalPages={props.totalPages}
+          onPageChange={props.onPageChange}
+          onPageSizeChange={props.onPageSizeChange}
+        />
+      ) : null}
     </Card>
   )
 }
